@@ -16,6 +16,13 @@ class StoreProductoRequest extends FormRequest
     {
         return !!$this->user();
     }
+    
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'categoria_id'=>$this->categoriaId
+        ]);
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -25,10 +32,11 @@ class StoreProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codigo' => ['required','string','max:50'],
+            'codigo' => ['required','string','min:3','max:50'],
             'nombre' =>  ['required','string','max:100'],
             'descripcion' => ['required','string','min:10'],
-            'imagen'=>['required','file','mimes:jpeg,png','max:6144']
+            'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
+            'categoriaId'=>['required']
         ];
     }
 

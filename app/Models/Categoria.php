@@ -21,4 +21,9 @@ class Categoria extends BaseModel
         'descripcion',
         'estado'
     ];
+
+    public function producto()
+    {
+        return $this->hasOne(Producto::class);
+    }
 }

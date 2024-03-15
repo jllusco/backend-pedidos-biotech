@@ -20,7 +20,7 @@ class ParametroResource extends JsonResource
             'codigo'=>$this->codigo,
             'nombre'=>$this->nombre,
             'descripcion'=>$this->descripcion,
-            'estado'=>$this->estado,
+            'estado'=>$this->estado
         ];
     }
 }

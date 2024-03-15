@@ -12,6 +12,6 @@ class ProductoCollection extends  BaseResourceCollection
 {
     public function __construct($resource)
     {
-        parent::__construct($resource, CategoriaResource::class);
+        parent::__construct($resource, ProductoResource::class);
     }
 }

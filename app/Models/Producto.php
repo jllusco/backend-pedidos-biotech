@@ -21,6 +21,12 @@ class Producto extends BaseModel
         'descripcion',
         'ruta_imagen',
         'precio_unitario',
-        'estado'
+        'estado',
+        'categoria_id'
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
 }

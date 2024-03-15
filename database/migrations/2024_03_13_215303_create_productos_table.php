@@ -18,7 +18,9 @@ return new class extends BaseMigration
         $table->text('descripcion');
         $table->string('ruta_imagen',200);
         $table->integer('cantidad_actual')->length(4)->default(0);
-        $table->decimal('precio_unitario',8,2);
+        $table->decimal('precio_unitario',8,2)->default(0.00);
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
+        $table->uuid('categoria_id');
+        $table->foreign('categoria_id')->references('id')->on('categoria');
     }
 };

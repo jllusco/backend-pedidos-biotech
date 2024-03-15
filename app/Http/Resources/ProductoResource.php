@@ -23,6 +23,7 @@ class ProductoResource extends JsonResource
             'cantidadActual'=>$this->cantidad_actual,
             'precioUnitario'=>$this->precio_unitario,
             'estado'=>$this->estado,
+            'categoria'=> new CategoriaResource($this->whenLoaded('categoria'))
         ];
     }
 }
