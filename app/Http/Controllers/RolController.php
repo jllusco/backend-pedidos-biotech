@@ -18,7 +18,7 @@ class RolController extends Controller
     public function index()
     {
         try {
-            $roles = Rol::paginate();
+            $roles = Rol::with('menus')->paginate();
             return ApiResponse::success( new RolCollection($roles));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
@@ -28,7 +28,24 @@ class RolController extends Controller
     public function store(StoreRolRequest $request)
     {
         try {
-            return new RolResource(Rol::create($request->all()));
+            $rol = Rol::create($request->all());
+            $menus = $request->get('menus');
+            RolMenu::where('rol_id', $rol->id)->delete();
+            foreach ($menus as $menuId) {
+                RolMenu::create([
+                    'rol_id' => $rol->id,
+                    'menu_id' => $menuId
+                ]);
+            }
+            $permisos = $request->get('permisos');
+            RolPermiso::where('rol_id', $rol->id)->delete();
+            foreach ($permisos as $permisoId) {
+                RolPermiso::create([
+                    'rol_id' => $rol->id,
+                    'permiso_id' => $permisoId
+                ]);
+            }
+            return new RolResource($rol);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }

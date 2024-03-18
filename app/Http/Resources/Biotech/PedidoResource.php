@@ -1,11 +1,15 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: juan.llusco
+ * Date: 18/3/2024
+ * Time: 16:01
+ */
+namespace App\Http\Resources\Biotech;
 
-namespace App\Http\Resources;
-
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductoResource extends JsonResource
+class PedidoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -17,8 +21,7 @@ class ProductoResource extends JsonResource
             'rutaImagen'=>$this->ruta_imagen,
             'cantidadActual'=>$this->cantidad_actual,
             'precioUnitario'=>$this->precio_unitario,
-            'estado'=>$this->estado,
-            'categoria'=> new CategoriaResource($this->whenLoaded('categoria'))
+            'estado'=>$this->estado
         ];
     }
 }

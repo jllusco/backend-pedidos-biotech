@@ -32,6 +32,22 @@ class RolSeeder extends Seeder
                 'descripcion'=>'Rol para administrar usuarios, roles, menus y parametros',
                 'estado'=>'ACTIVO',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>'970258ce-6473-4945-9cb9-4225873d219d',
+                'codigo'=>'ROL-002',
+                'nombre'=>'ALMACEN',
+                'descripcion'=>'Rol para el personal de almacen',
+                'estado'=>'ACTIVO',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>'70796247-01c3-469f-9fae-cd6082ebad86',
+                'codigo'=>'ROL-002',
+                'nombre'=>'CLIENTE',
+                'descripcion'=>'Rol para el cliente',
+                'estado'=>'ACTIVO',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ]
         ];
 

@@ -42,7 +42,6 @@ class StoreProductoRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-
         throw new HttpResponseException(ApiResponse::error($validator->errors()->first()));
     }
 }

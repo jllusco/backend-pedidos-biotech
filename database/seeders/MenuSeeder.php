@@ -62,10 +62,19 @@ class MenuSeeder extends Seeder
             ],
             [
                 'id'=>'9ee88462-5baf-4c9e-83dc-2b19df5cb034',
-                'nombre'=>'Inventario',
-                'ruta'=>'inventario',
+                'nombre'=>'Productos',
+                'ruta'=>'productos',
                 'icono'=>'inventory',
                 'orden'=>9,
+                'estado'=>'ACTIVO',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
+                'nombre'=>'Pedidos',
+                'ruta'=>'pedidos',
+                'icono'=>'shopping_cart',
+                'orden'=>10,
                 'estado'=>'ACTIVO',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ]

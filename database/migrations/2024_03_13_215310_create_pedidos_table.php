@@ -19,7 +19,7 @@ return new class extends BaseMigration
         $table->decimal('monto_total',8,2);
         $table->timestamp('fecha_entrega')->useCurrent()->nullable();
         $table->uuid('usuario_entrega_id')->nullable();
-        $table->enum('estado',['SOLICITADO','EN ESPERA','COMPLETADO','CANCELADO'])->default('SOLICITADO');
+        $table->enum('estado',['CREADO','SOLICITADO','EN ESPERA','COMPLETADO','CANCELADO'])->default('CREADO');
         $table->enum('tipo',['CLIENTE','OPERDAROR'])->default('CLIENTE');
         $table->enum('sub_tipo',['REACTIVO','REACTIVOS RUO','CONSUMIBLES'])->nullable();
         $table->enum('metodo_pago',['EFECTIVO','TRANSFERENCIA','QR','TARJETA DE CREDITO'])->default('EFECTIVO')->nullable();
