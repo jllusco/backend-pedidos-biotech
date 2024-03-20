@@ -20,7 +20,7 @@ class RolMenuSeeders extends Seeder
     {
         $rolSuperAdmin = '450f3f9a-d10a-475f-8828-82d0057652c3';
         $rolAdmin = '7a16f88b-10bb-4a07-9bc2-3458124af968';
-        $rolAlmacen = '970258ce-6473-4945-9cb9-4225873d219d';
+        $rolAlmacen = '3d12cb09-91f2-43aa-be60-bbf322116a07';
         $rolCliente = '70796247-01c3-469f-9fae-cd6082ebad86';
 
         $data = [
@@ -117,19 +117,13 @@ class RolMenuSeeders extends Seeder
             // CLIENTE
             [
                 'id'=> (string)Str::uuid(),
-                'rol_id'=>$rolAdmin,
+                'rol_id'=>$rolCliente,
                 'menu_id'=>'1b174ed2-e559-4ea1-933d-15ca8c9b7e46',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
             [
                 'id'=> (string)Str::uuid(),
-                'rol_id'=>$rolAdmin,
-                'menu_id'=>'9ee88462-5baf-4c9e-83dc-2b19df5cb034',
-                'created_by'=>config('constants.ID_USUARIO_ADMIN')
-            ],
-            [
-                'id'=> (string)Str::uuid(),
-                'rol_id'=>$rolAdmin,
+                'rol_id'=>$rolCliente,
                 'menu_id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ]

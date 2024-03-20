@@ -78,7 +78,10 @@ Route::group([
 
     Route::controller(ProductoController::class)->group(function (){
         Route::get('productos','index');
+        Route::get('productos/{producto}','show');
         Route::post('productos','store');
+        Route::put('productos/{producto}','update');
+        Route::patch('productos/{producto}/imagen','updateImagen');
     });
 });
 

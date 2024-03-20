@@ -9,8 +9,10 @@ use App\Http\Requests\UpdateProductoRequest;
 use App\Http\Resources\ProductoCollection;
 use App\Http\Resources\ProductoResource;
 use App\Repository\ProductoRepository;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 class ProductoController extends Controller
 {
     private  $productoRepository;
@@ -40,10 +42,46 @@ class ProductoController extends Controller
                 $imagen->move($folder,$fileName);
                 $datos['ruta_imagen']= "$folder/$fileName";
             }
-            $usuario = new ProductoResource(Producto::create($datos));
-            return ApiResponse::success($usuario);
+            $producto = new ProductoResource(Producto::create($datos));
+            return ApiResponse::success($producto);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
     }
+
+    public function show(Producto $producto){
+        try {
+          $producto->load('categoria');
+          return ApiResponse::success(new ProductoResource($producto));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function update(Producto $producto,UpdateProductoRequest $request){
+        try {
+            $producto->update($request->all());
+            return ApiResponse::success(new ProductoResource($producto));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function updateImagen(Producto $producto, Request $request){
+        try {
+            $imagen = $request->files->get('imagen');
+            if(!$imagen){
+                throw new \Exception('Debes enviar la imagen',400);
+            }
+            $folder='image/productos';
+            $fileName = (string)Str::uuid().'.'.$imagen->getClientOriginalExtension();
+            $imagen->move($folder,$fileName);
+            $datos['ruta_imagen']= "$folder/$fileName";
+            $producto->update($datos);
+            return ApiResponse::success(new ProductoResource($producto));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
 }

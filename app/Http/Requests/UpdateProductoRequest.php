@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateProductoRequest extends FormRequest
 {
@@ -11,7 +14,14 @@ class UpdateProductoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return !!$this->user();
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'categoria_id'=>$this->categoriaId
+        ]);
     }
 
     /**
@@ -22,7 +32,16 @@ class UpdateProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'codigo' => ['required','string','min:3','max:50'],
+            'nombre' =>  ['required','string','max:100'],
+            'descripcion' => ['required','string','min:10'],
+            'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
+            'categoriaId'=>['required']
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(ApiResponse::error($validator->errors()->first()));
     }
 }

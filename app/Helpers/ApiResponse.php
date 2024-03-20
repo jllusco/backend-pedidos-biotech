@@ -48,8 +48,8 @@ class ApiResponse
         }
 
         return response()->json([
-            'success' => false,
-            'message' => $message,
+            'finalizado' => false,
+            'mensaje' => $message,
         ], $statusCode);
     }
 }

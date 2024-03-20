@@ -16,11 +16,13 @@ return new class extends BaseMigration
         $table->string('codigo',50);
         $table->string('nombre',100);
         $table->text('descripcion');
-        $table->string('ruta_imagen',200);
+        $table->string('ruta_imagen',200)->default('image/productos/product-default.png');
         $table->integer('cantidad_actual')->length(4)->default(0);
         $table->decimal('precio_unitario',8,2)->default(0.00);
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
         $table->uuid('categoria_id');
+        $table->uuid('proveedor_id')->nullable();
         $table->foreign('categoria_id')->references('id')->on('categoria');
+        $table->foreign('proveedor_id')->references('id')->on('proveedor');
     }
 };

@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,11 +38,12 @@ class AuthController extends Controller
                 $user = Auth::user();
                 if($user->estado === 'INACTIVO')
                     return ApiResponse::error('Su cuenta se encuentra inhabilitada, contactese con el administrador.');
-                $response['usuario']=$user;
+                $user->rol;
+                $response['usuario']=new UserResource($user);
                 $response["menu"] = $this->menuRepository->obtenerMenusPorRol($user->rol_id);
                 $token = $user->createToken('token');
                 $response['token']= $token->plainTextToken;
-                $response['fechaActual'] = (new DateTime())->format('Y-m-d');
+                $response['fechaActual'] = (new DateTime())->format('Y-m-d H:i:s');
                 return ApiResponse::success($response);
             }else{
                 return ApiResponse::error('Error en su usuario o su contraseña.');
