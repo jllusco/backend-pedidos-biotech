@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             RolPermisoSeeders::class,
             ProveedorSeeder::class,
             CategoriaSeeder::class,
+            RegistroSanitarioSeeder::class,
             ProductoSeeder::class
         ]);
     }

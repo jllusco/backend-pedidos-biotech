@@ -6,7 +6,40 @@
  * Time: 16:02
  */
 
-class PedidoCollection
-{
+namespace App\Http\Resources\Biotech;
 
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class PedidoCollection extends ResourceCollection
+{
+    public function toArray($request)
+    {
+        return [
+
+            'rows' => $this->collection->map(function ($pedido) {
+                return [
+                    'id'=>$pedido->id,
+                    'codigo'=>$pedido->codigo,
+                    'usuarioSolicitanteId'=>$pedido->usuario_solicitante_id,
+                    'fecha'=>$pedido->fecha,
+                    'montoTotal'=>$pedido->monto_total,
+                    'fechaEntrega'=>$pedido->fecha_enterga,
+                    'usuarioEntregaId'=>$pedido->usuario_entrega_id,
+                    'estado'=>$pedido->estado,
+                    'tipo'=>$pedido->tipo,
+                    'subTipo'=>$pedido->sub_tipo,
+                    'metodoPago'=>$pedido->metodo_pago,
+                    'totalProductos'=>$pedido->total_productos,
+                    'createdAt'=>$pedido->created_at
+                ];
+            }),
+            'pagination' => [
+                'total'       => $this->total(),
+                'count'       => $this->count(),
+                'perPages'     => $this->perPage(),
+                'currentPage' => $this->currentPage(),
+                'totalPages'  => $this->lastPage(),
+            ],
+        ];
+    }
 }

@@ -2,65 +2,198 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pedido;
+use App\Helpers\ApiResponse;
 use App\Http\Requests\StorePedidoRequest;
-use App\Http\Requests\UpdatePedidoRequest;
+use App\Http\Resources\Biotech\DetallePedidoCollection;
+use App\Http\Resources\Biotech\PedidoCollection;
+use App\Http\Resources\Biotech\PedidoResource;
+use App\Models\DetallePedido;
+use App\Models\Pedido;
+use App\Repository\DetallePedidoRepository;
+use App\Repository\PedidoRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PedidoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private $pedidoRepository;
+    private $detallePedidoRepository;
+
+    public function __construct(PedidoRepository $pedidoRepository, DetallePedidoRepository $detallePedidoRepository)
     {
-        //
+        $this->pedidoRepository = $pedidoRepository;
+        $this->detallePedidoRepository = $detallePedidoRepository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function index(Request $request){
+        try {
+            $pedidos = $this->pedidoRepository->findAll($request->query->all());
+            return ApiResponse::success( new PedidoCollection($pedidos));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePedidoRequest $request)
-    {
-        dd($request);
+
+    public function store(StorePedidoRequest $request){
+        try {
+            $datos = $request->request->all();
+            $productos = $request->get('productos');
+            $montoTotal = $this->getMontoTotal($productos);
+            $datos['monto_total'] = $montoTotal;
+            $datos['contacto']= json_encode($datos['contacto']);
+            $pedido = Pedido::create($datos);
+            foreach ($productos as $producto) {
+                DetallePedido::create([
+                    'pedido_id'=>$pedido->id,
+                    'producto_id'=>$producto['id'],
+                    'cantidad'=>$producto['cantidadSolicitada'],
+                    'precio'=>$producto['precioUnitario'],
+                    'monto'=>intval($producto['cantidadSolicitada'])* doubleval($producto['precioUnitario']),
+                    'created_by'=>$request->user()->id
+                ]);
+            }
+            return ApiResponse::success(new PedidoResource($pedido));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Pedido $pedido)
-    {
-        //
+    public function show(Pedido $pedido){
+        try {
+            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            return ApiResponse::success([
+                'pedido'=>new PedidoResource($pedido),
+                'productos'=>new DetallePedidoCollection($productos)
+            ]);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pedido $pedido)
-    {
-        //
+    public function generarCodigo(){
+        $meses = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+        $fechaActual = Carbon::now();
+        $cantidadActual = $this->pedidoRepository->getCantidad($fechaActual->year,$fechaActual->month);
+        $numero = str_pad($cantidadActual+1,3,'0',STR_PAD_LEFT);
+        $mes=$meses[$fechaActual->format('n')-1];
+        return $mes.$numero;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePedidoRequest $request, Pedido $pedido)
-    {
-        //
+    public function enviar(Pedido $pedido,Request $request){
+        try {
+            if($pedido->estado !== 'CREADO'){
+                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
+            }
+            $datos=[
+                'codigo'=>$this->generarCodigo(),
+                'fecha'=>Carbon::now(),
+                'usuario_solicitante_id'=> $request->user()->id,
+                'estado'=>'SOLICITADO',
+            ];
+            $pedido->update($datos);
+            return ApiResponse::success(new PedidoResource($pedido));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Pedido $pedido)
-    {
-        //
+    public function getMontoTotal($productos){
+        return array_reduce($productos, function ($carry, $item){
+            return $carry + (intval($item['cantidadSolicitada'])* doubleval($item['precioUnitario']));
+        }, 0);
     }
+
+
+    public function cantidades(Request $request){
+        try {
+            $cantidades = $this->pedidoRepository->getCantidadByEstado();
+            $respuesta = [
+                'total'=>$cantidades->sum('cantidad'),
+                'estados'=>$cantidades
+            ];
+            return ApiResponse::success($respuesta);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function generarPdf(Pedido $pedido){
+        try {
+            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            $pedido->contacto = json_decode($pedido->contacto);
+            $data = [
+                'title'=>'PEDIDO',
+                'pedido'=>new PedidoResource($pedido),
+                'logo'=>$this->getLogoBase64(),
+                'productos'=>$productos
+            ];
+            $pdf = Pdf::loadView('pdf.pedido',$data);
+            $pdf->setPaper('letter');
+            return $pdf->download('pedido.pdf');
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+
+    public function getLogoBase64(){
+        $imagePath = public_path('image/logo_biotech_min.jpg');
+        $base64Uri = '';
+        if (file_exists($imagePath)) {
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = base64_encode($imageContent);
+            $mime = mime_content_type($imagePath);
+            $base64Uri = 'data:' . $mime . ';base64,' . $base64Image;
+        }
+        return $base64Uri;
+    }
+
+
+    public function generarPdfOpa(Pedido $pedido){
+        try {
+            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            $templatePath = public_path('opa.xlsx');
+            $pedido->contacto = json_decode($pedido->contacto);
+            $data = [
+                'B6'=> Carbon::parse($pedido->fecha)->format('d/m/Y'),
+                'B7'=> $pedido->institucion,
+                'B8'=> $pedido->ciudad,
+                'B9'=> $pedido->created_by,
+                'B10'=> $pedido->asunto,
+                'B11'=>$pedido->comentario,
+                'G6'=>$pedido->contacto->nombre,
+                'G7'=>$pedido->contacto->cargo,
+            ];
+            $fila=14;
+            //$columnas =['A','B','C','D','E','F','G','H'];
+            foreach ($productos as $producto){
+                $data['A'.$fila]=$producto->producto->codigo;
+                $data['B'.$fila]=$producto->producto->descripcion.' - '.$producto->producto->presentacion->nombre;
+                $data['C'.$fila]=$producto->cantidad;
+                $data['D'.$fila]=$producto->producto->unidad;
+                $data['E'.$fila]=0;
+                $data['F'.$fila]=0;
+                $data['G'.$fila]=$producto->producto->registro_sanitario_id?$producto->producto->registroSanitario->numero:'NO TIENE';
+                $data['H'.$fila]='DE '.$producto->producto->temperatura->min.' A '.$producto->producto->temperatura->max;
+                $fila++;
+            }
+
+            $spreadsheet = IOFactory::load($templatePath);
+            $hoja = $spreadsheet->getActiveSheet();
+            foreach ($data as $cell=>$value){
+                $hoja->setCellValue($cell,$value);
+            }
+            $temporaryFilePath = storage_path('app/temp_report.xlsx');
+            $writer = new Xlsx($spreadsheet);
+            $writer->save($temporaryFilePath);
+            return response()->download($temporaryFilePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
 }

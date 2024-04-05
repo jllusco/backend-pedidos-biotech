@@ -14,6 +14,9 @@ return new class extends BaseMigration
     protected function additionalColumns(Blueprint $table)
     {
         $table->uuid('pedido_id');
-        $table->enum('estado',['SOLICITADO','EN ESPERA','COMPLETADO','CANCELADO'])->default('SOLICITADO');
+        $table->uuid('producto_id');
+        $table->integer('cantidad');
+        $table->decimal('precio',8,2);
+        $table->decimal('monto',8,2);
     }
 };

@@ -6,8 +6,8 @@ use App\Helpers\ApiResponse;
 use App\Models\Producto;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
-use App\Http\Resources\ProductoCollection;
-use App\Http\Resources\ProductoResource;
+use App\Http\Resources\Biotech\ProductoCollection;
+use App\Http\Resources\Biotech\ProductoResource;
 use App\Repository\ProductoRepository;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
@@ -51,7 +51,7 @@ class ProductoController extends Controller
 
     public function show(Producto $producto){
         try {
-          $producto->load('categoria');
+          $producto->load(['categoria','registroSanitario','presentacion']);
           return ApiResponse::success(new ProductoResource($producto));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
@@ -60,7 +60,9 @@ class ProductoController extends Controller
 
     public function update(Producto $producto,UpdateProductoRequest $request){
         try {
-            $producto->update($request->all());
+            $datos = $request->all();
+            $datos['temperatura'] = json_encode($datos['temperatura']);
+            $producto->update($datos);
             return ApiResponse::success(new ProductoResource($producto));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
@@ -83,5 +85,21 @@ class ProductoController extends Controller
             return ApiResponse::exception($e);
         }
     }
+
+    public function updateEstado(Producto $producto, Request $request){
+        try {
+            $estado = $request->request->get('estado');
+            if(!$estado){
+                throw new \Exception('Estado es requerido',400);
+            }
+            $producto->update(['estado'=>$estado]);
+            return ApiResponse::success(new ProductoResource($producto));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+
+
 
 }

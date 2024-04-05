@@ -2,65 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
+use App\Http\Resources\Biotech\ProveedorCollection;
+use App\Http\Resources\Biotech\ProveedorResource;
 use App\Models\Proveedor;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 
 class ProveedorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    public function index(){
+        try {
+            $menus = Proveedor::paginate();
+            return ApiResponse::success( new ProveedorCollection($menus));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProveedorRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Proveedor $proveedor)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Proveedor $proveedor)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateProveedorRequest $request, Proveedor $proveedor)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Proveedor $proveedor)
-    {
-        //
+    public function store(StoreProveedorRequest $request){
+        try {
+            $datos = $request->all();
+            $datos['contacto'] = json_encode($datos['contacto']);
+            $usuario = new ProveedorResource(Proveedor::create($datos));
+            return ApiResponse::success($usuario);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
     }
 }

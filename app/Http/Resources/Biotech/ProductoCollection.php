@@ -6,7 +6,9 @@
  * Time: 11:21
  */
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Biotech;
+
+use App\Http\Resources\BaseResourceCollection;
 
 class ProductoCollection extends  BaseResourceCollection
 {

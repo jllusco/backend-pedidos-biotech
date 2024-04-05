@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StorePedidoRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class StorePedidoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return !!$this->user();
     }
 
     /**
@@ -22,7 +25,12 @@ class StorePedidoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'ciudad'=> ['required','string'],
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(ApiResponse::error($validator->errors()->first()));
     }
 }

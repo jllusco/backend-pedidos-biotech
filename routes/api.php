@@ -7,7 +7,10 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\RegistroSanitarioController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -20,6 +23,14 @@ use App\Http\Controllers\AuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::group(['prefix'=>'publico'],function(){
+    Route::controller(PedidoController::class)->group(function (){
+        Route::get('codigo','generarCodigo');
+        Route::get('pdf/{pedido}','generarPdf');
+        Route::get('pedido/{pedido}/excel','generarPdfOpa');
+    });
+});
 
 Route::group(['prefix'=>'auth'],function(){
     Route::controller(AuthController::class)->group(function (){
@@ -76,14 +87,46 @@ Route::group([
         Route::post('categorias','store');
     });
 
+    Route::controller(ProveedorController::class)->group(function (){
+        Route::get('proveedores','index');
+        Route::post('proveedores','store');
+    });
+
+    Route::controller(RegistroSanitarioController::class)->group(function (){
+        Route::get('registros-sanitarios','index');
+        Route::post('registros-sanitarios','store');
+    });
+
     Route::controller(ProductoController::class)->group(function (){
         Route::get('productos','index');
         Route::get('productos/{producto}','show');
         Route::post('productos','store');
         Route::put('productos/{producto}','update');
         Route::patch('productos/{producto}/imagen','updateImagen');
+        Route::patch('productos/{producto}/estado','updateEstado');
+    });
+
+    Route::controller(PedidoController::class)->group(function (){
+        Route::get('pedidos','index');
+        Route::post('pedidos','store');
+        Route::get('pedidos/{pedido}','show');
+        Route::put('pedidos/{pedido}/enviar','enviar');
+        Route::get('pedidos/{pedido}/pdf','generarPdf');
+        Route::get('pedidos/{pedido}/excel-opa','generarPdfOpa');
     });
 });
+
+
+Route::group([
+    'prefix'=>'reporte',
+    'middleware'=>'auth:sanctum'
+],function(){
+    Route::controller(PedidoController::class)->group(function (){
+        Route::get('pedidos/cantidad','cantidades');
+    });
+});
+
+
 
 
 

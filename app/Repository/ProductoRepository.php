@@ -13,7 +13,7 @@ class ProductoRepository
 {
     public function findAll($request){
 
-        $query = Producto::with('categoria');
+        $query = Producto::with(['categoria','presentacion','registroSanitario','proveedor']);
 
         if(isset($request['codigo'])){
             $query->where('codigo','like','%'.$request['codigo'].'%');
@@ -24,6 +24,14 @@ class ProductoRepository
         if(isset($request['descripcion'])){
             $query->where('descripcion','like','%'.$request['descripcion'].'%');
         }
-        return $query->paginate($request['limit']??15);
+        if(isset($request['oferta'])){
+            $query->where('oferta','=',intval($request['oferta']));
+        }
+        if(isset($request['estado'])){
+            $query->where('estado','=',$request['estado']);
+        }
+
+        $query->orderBy('created_at','DESC');
+        return $query->paginate($request['limit']??10);
     }
 }

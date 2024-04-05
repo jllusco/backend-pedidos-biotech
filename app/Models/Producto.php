@@ -22,11 +22,37 @@ class Producto extends BaseModel
         'ruta_imagen',
         'precio_unitario',
         'estado',
-        'categoria_id'
+        'unidad',
+        'temperatura',
+        'registro_sanitario_id',
+        'presentacion_id',
+        'categoria_id',
+        'proveedor_id',
+        'oferta'
     ];
 
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class);
+    }
+
+    public function presentacion()
+    {
+        return $this->belongsTo(Parametro::class);
+    }
+
+    public function registroSanitario()
+    {
+        return $this->belongsTo(RegistroSanitario::class);
+    }
+
+    public function getTemperaturaAttribute($value)
+    {
+        return json_decode($value);
     }
 }

@@ -7,6 +7,7 @@
  */
 namespace App\Http\Resources\Biotech;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PedidoResource extends JsonResource
@@ -16,12 +17,29 @@ class PedidoResource extends JsonResource
         return [
             'id'=>$this->id,
             'codigo'=>$this->codigo,
-            'nombre'=>$this->nombre,
-            'descripcion'=>$this->descripcion,
-            'rutaImagen'=>$this->ruta_imagen,
-            'cantidadActual'=>$this->cantidad_actual,
-            'precioUnitario'=>$this->precio_unitario,
-            'estado'=>$this->estado
+            'usuarioSolicitanteId'=>$this->usuario_solicitante_id,
+            'fecha'=>$this->fecha,
+            'montoTotal'=>$this->monto_total,
+            'fechaEntrega'=>$this->fecha_enterga,
+            'usuarioEntregaId'=>$this->usuario_entrega_id,
+            'estado'=>$this->estado,
+            'tipo'=>$this->tipo,
+            'subTipo'=>$this->sub_tipo,
+            'metodoPago'=>$this->metodo_pago,
+            'createdAt'=>$this->created_at,
+            'ciudad'=>$this->ciudad,
+            'institucion'=>$this->institucion,
+            'asunto'=>$this->asunto,
+            'comentatio'=>$this->comentatio,
+            'contacto'=>$this->contacto,
+            'createdBy'=>$this->created_by
         ];
+    }
+
+
+    public function addAttributes($key,$value,Request $request){
+        $attributes = parent::toArray($request);
+        $attributes[$key] = $value;
+        return $attributes;
     }
 }

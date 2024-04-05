@@ -20,9 +20,16 @@ return new class extends BaseMigration
         $table->integer('cantidad_actual')->length(4)->default(0);
         $table->decimal('precio_unitario',8,2)->default(0.00);
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
+        $table->enum('unidad',['CAJA','FRASCO','KIT','UNIDAD'])->default('UNIDAD');
+        $table->jsonb('temperatura')->nullable()->default(null);
+        $table->boolean('oferta')->default(false);
         $table->uuid('categoria_id');
         $table->uuid('proveedor_id')->nullable();
+        $table->uuid('registro_sanitario_id')->nullable();
+        $table->uuid('presentacion_id')->nullable();
         $table->foreign('categoria_id')->references('id')->on('categoria');
         $table->foreign('proveedor_id')->references('id')->on('proveedor');
+        $table->foreign('registro_sanitario_id')->references('id')->on('registro_sanitario');
+        $table->foreign('presentacion_id')->references('id')->on('parametro');
     }
 };

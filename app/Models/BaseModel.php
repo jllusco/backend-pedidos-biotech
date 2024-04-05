@@ -9,6 +9,7 @@
 namespace App\Models;
 
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
@@ -64,5 +65,10 @@ class BaseModel extends Model
     public function deletedBy()
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y H:i:s');
     }
 }

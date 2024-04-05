@@ -20,7 +20,10 @@ class UpdateProductoRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'categoria_id'=>$this->categoriaId
+            'categoria_id'=>$this->categoriaId,
+            'proveedor_id'=>$this->proveedorId,
+            'presentacion_id'=>$this->presentacionId,
+            'registro_sanitario_id'=>$this->registroSanitarioId
         ]);
     }
 
@@ -36,7 +39,9 @@ class UpdateProductoRequest extends FormRequest
             'nombre' =>  ['required','string','max:100'],
             'descripcion' => ['required','string','min:10'],
             'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
-            'categoriaId'=>['required']
+            'categoriaId'=>['required'],
+            'proveedorId'=>['required'],
+            'presentacionId'=>['required'],
         ];
     }
 

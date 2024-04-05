@@ -8,16 +8,22 @@ use App\Http\Resources\ParametroResource;
 use App\Models\Parametro;
 use App\Http\Requests\StoreParametroRequest;
 use App\Http\Requests\UpdateParametroRequest;
+use App\Repository\ParametroRepository;
+use Illuminate\Http\Request;
 
 class ParametroController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private $parametroRepository;
+
+    public function __construct(ParametroRepository $parametroRepository)
+    {
+        $this->parametroRepository=$parametroRepository;
+    }
+
+    public function index(Request $request)
     {
         try {
-            $parametros = Parametro::paginate();
+            $parametros = $this->parametroRepository->findAll($request->query->all());
             return ApiResponse::success( new ParametroCollection($parametros));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
