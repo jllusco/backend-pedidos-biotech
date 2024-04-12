@@ -30,6 +30,10 @@ class PedidoController extends Controller
 
     public function index(Request $request){
         try {
+            $params = $request->query->all();
+            if(!$request->user()->tokenCan('pedidos:listar:todo')){
+                $params['created_by'] = $request->user()->id;
+            }
             $pedidos = $this->pedidoRepository->findAll($request->query->all());
             return ApiResponse::success( new PedidoCollection($pedidos));
         } catch (\Exception $e) {
@@ -101,6 +105,22 @@ class PedidoController extends Controller
         }
     }
 
+    public function recepcionar(Pedido $pedido,Request $request){
+        try {
+            if($pedido->estado !== 'SOLICITADO'){
+                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
+            }
+            $datos=[
+                'usuario_entrega_id'=> $request->user()->id,
+                'estado'=>'EN CURSO',
+            ];
+            $pedido->update($datos);
+            return ApiResponse::success(new PedidoResource($pedido));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
     public function getMontoTotal($productos){
         return array_reduce($productos, function ($carry, $item){
             return $carry + (intval($item['cantidadSolicitada'])* doubleval($item['precioUnitario']));
@@ -121,7 +141,7 @@ class PedidoController extends Controller
         }
     }
 
-    public function generarPdf(Pedido $pedido){
+    public function generarPdf(Pedido $pedido, Request $request){
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
             $pedido->contacto = json_decode($pedido->contacto);
@@ -129,7 +149,8 @@ class PedidoController extends Controller
                 'title'=>'PEDIDO',
                 'pedido'=>new PedidoResource($pedido),
                 'logo'=>$this->getLogoBase64(),
-                'productos'=>$productos
+                'productos'=>$productos,
+                'esOperador'=>$request->user()->rol->codigo !== 'ROL-003'
             ];
             $pdf = Pdf::loadView('pdf.pedido',$data);
             $pdf->setPaper('letter');
@@ -138,7 +159,6 @@ class PedidoController extends Controller
             return ApiResponse::exception($e);
         }
     }
-
 
     public function getLogoBase64(){
         $imagePath = public_path('image/logo_biotech_min.jpg');
@@ -152,10 +172,12 @@ class PedidoController extends Controller
         return $base64Uri;
     }
 
-
     public function generarPdfOpa(Pedido $pedido){
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            $montoTotal = array_reduce($productos->toArray(), function ($carry, $item){
+                return $carry + doubleval($item['monto']);
+            }, 0);
             $templatePath = public_path('opa.xlsx');
             $pedido->contacto = json_decode($pedido->contacto);
             $data = [
@@ -175,12 +197,14 @@ class PedidoController extends Controller
                 $data['B'.$fila]=$producto->producto->descripcion.' - '.$producto->producto->presentacion->nombre;
                 $data['C'.$fila]=$producto->cantidad;
                 $data['D'.$fila]=$producto->producto->unidad;
-                $data['E'.$fila]=0;
-                $data['F'.$fila]=0;
+                $data['E'.$fila]=$producto->precio;
+                $data['F'.$fila]=$producto->monto;
                 $data['G'.$fila]=$producto->producto->registro_sanitario_id?$producto->producto->registroSanitario->numero:'NO TIENE';
-                $data['H'.$fila]='DE '.$producto->producto->temperatura->min.' A '.$producto->producto->temperatura->max;
+                $data['H'.$fila]=$producto->producto->temperatura?'DE '.$producto->producto->temperatura->min.' A '.$producto->producto->temperatura->max:'N/A';
                 $fila++;
             }
+            $data['E'.$fila]='TOTAL';
+            $data['F'.$fila]=$montoTotal;
 
             $spreadsheet = IOFactory::load($templatePath);
             $hoja = $spreadsheet->getActiveSheet();
@@ -195,5 +219,4 @@ class PedidoController extends Controller
             return ApiResponse::exception($e);
         }
     }
-
 }

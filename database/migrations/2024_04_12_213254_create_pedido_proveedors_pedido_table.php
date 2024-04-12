@@ -8,16 +8,15 @@ return new class extends BaseMigration
     public function __construct()
     {
         parent::__construct();
-        $this->table = 'detalle_pedido';
+        $this->table = 'pedido_proveedor_pedido';
     }
 
     protected function additionalColumns(Blueprint $table)
     {
         $table->uuid('pedido_id');
-        $table->uuid('producto_id');
-        $table->integer('cantidad');
-        $table->enum('tipo_producto',['CONSUMIBLE','REACTIVO','RUO']);
-        $table->decimal('precio',8,2);
-        $table->decimal('monto',8,2);
+        $table->uuid('pedido_proveedor_id');
+        $table->foreign('pedido_id')->references('id')->on('pedido');
+        $table->foreign('pedido_proveedor_id')->references('id')->on('pedido_proveedor');
+
     }
 };

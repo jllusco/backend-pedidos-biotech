@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateProductoRequest extends FormRequest
+class UpdateUsuarioRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,10 +20,13 @@ class UpdateProductoRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'categoria_id'=>$this->categoriaId,
-            'proveedor_id'=>$this->proveedorId,
-            'presentacion_id'=>$this->presentacionId,
-            'registro_sanitario_id'=>$this->registroSanitarioId
+            'name'=>$this->usuario,
+            'password'=>$this->contrasena,
+            'numero_documento'=>$this->numeroDocumento,
+            'primer_apellido'=>$this->primerApellido,
+            'segundo_apellido'=>$this->segundoApellido,
+            'correo_electronico'=>$this->correoElectronico,
+            'rol_id'=>$this->rolId
         ]);
     }
 
@@ -35,13 +38,15 @@ class UpdateProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codigo' => ['required','string','min:3','max:50'],
-            'nombre' =>  ['required','string','max:100'],
-            'descripcion' => ['required','string','min:10'],
-            'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
-            'tipo'=>['required'],
-            'proveedorId'=>['required'],
-            'presentacionId'=>['required'],
+            'name' => ['required','unique:users','min:4'],
+            'numeroDocumento' => ['required','min:4'],
+            'nombres' => ['required'],
+            'primerApellido'=>['nullable'],
+            'segundoApellido'=>['nullable'],
+            'correoElectronico'=>['required'],
+            'celular'=>['required'],
+            'estado'=>['required'],
+            'rolId'=>['required']
         ];
     }
 

@@ -28,7 +28,8 @@ Route::group(['prefix'=>'publico'],function(){
     Route::controller(PedidoController::class)->group(function (){
         Route::get('codigo','generarCodigo');
         Route::get('pdf/{pedido}','generarPdf');
-        Route::get('pedido/{pedido}/excel','generarPdfOpa');
+        Route::get('pedidos/{pedido}/excel','generarPdfOpa');
+        Route::post('pedidos/pial','generarPial');
     });
 });
 
@@ -54,6 +55,9 @@ Route::group([
         Route::get('usuarios','index');
         Route::get('usuarios/{user}','show');
         Route::post('usuarios','store');
+        Route::patch('usuarios/{user}/estado','updateEstado');
+        Route::patch('usuarios/contrasena','updateContrasena');
+        Route::patch('usuarios/{user}/reset-contrasena','restorePassword');
     });
 
     Route::controller(RolController::class)->group(function (){
@@ -109,8 +113,10 @@ Route::group([
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos','index');
         Route::post('pedidos','store');
+        Route::post('pedidos/pial','generarPial');
         Route::get('pedidos/{pedido}','show');
         Route::put('pedidos/{pedido}/enviar','enviar');
+        Route::put('pedidos/{pedido}/atencion','recepcionar');
         Route::get('pedidos/{pedido}/pdf','generarPdf');
         Route::get('pedidos/{pedido}/excel-opa','generarPdfOpa');
     });

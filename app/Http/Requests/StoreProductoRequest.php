@@ -39,7 +39,7 @@ class StoreProductoRequest extends FormRequest
             'nombre' =>  ['required','string','max:100'],
             'descripcion' => ['required','string','min:10'],
             'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
-            'categoriaId'=>['required'],
+            'tipo'=>['required'],
             'proveedorId'=>['required'],
             'presentacionId'=>['required']
         ];

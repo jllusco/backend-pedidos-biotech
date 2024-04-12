@@ -8,6 +8,7 @@
 
 namespace App\Http\Resources\Biotech;
 
+use App\Http\Resources\UserSimpleResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PedidoCollection extends ResourceCollection
@@ -21,13 +22,16 @@ class PedidoCollection extends ResourceCollection
                     'id'=>$pedido->id,
                     'codigo'=>$pedido->codigo,
                     'usuarioSolicitanteId'=>$pedido->usuario_solicitante_id,
+                    'nombreUsuarioSolicitante'=>$pedido->nombre_usuario_solicitante,
                     'fecha'=>$pedido->fecha,
                     'montoTotal'=>$pedido->monto_total,
                     'fechaEntrega'=>$pedido->fecha_enterga,
                     'usuarioEntregaId'=>$pedido->usuario_entrega_id,
+                    'nombreUsuarioEntrega'=>$pedido->nombre_usuario_entrega,
                     'estado'=>$pedido->estado,
                     'tipo'=>$pedido->tipo,
                     'subTipo'=>$pedido->sub_tipo,
+                    'institucion'=>$pedido->institucion,
                     'metodoPago'=>$pedido->metodo_pago,
                     'totalProductos'=>$pedido->total_productos,
                     'createdAt'=>$pedido->created_at

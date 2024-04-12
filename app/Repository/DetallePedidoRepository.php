@@ -19,4 +19,12 @@ class DetallePedidoRepository
         $query->orderBy('created_at','DESC');
         return $query->get();
     }
+
+    public function getByPedidosPial($idPedidos){
+        $query = DetallePedido::query();
+        $query->selectRaw('producto_id, producto.precio_unitario, producto.tipo, SUM(cantidad) as cantidad')
+            ->join('producto', 'producto.id', '=', 'producto_id')
+            ->groupBy('producto_id');
+        return $query->get();
+    }
 }

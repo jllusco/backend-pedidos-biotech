@@ -16,7 +16,6 @@ class MenuRepository{
         ->select('menu.*')
         ->orderBy('menu.orden','ASC')
         ->get();
-
-    return MenuResource::collection($menus);
+        return MenuResource::collection($menus);
     }
 }

@@ -28,7 +28,8 @@ class Producto extends BaseModel
         'presentacion_id',
         'categoria_id',
         'proveedor_id',
-        'oferta'
+        'oferta',
+        'tipo'
     ];
 
     public function categoria()

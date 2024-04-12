@@ -4,13 +4,16 @@
     <title>{{ $title }}</title>
     <link rel="stylesheet" type="text/css" href="{{public_path('css/bootstrap.min.css') }}"/>
     <style>
-        body{
-            margin-right: 2cm;
-            margin-left: 1.5cm;
+        .container{
+            margin-right: 2cm !important;
+            margin-left: 1.5cm !important;
         }
         .text-title-primary{
             color: #014b81;
             font-weight: bold;
+        }
+        .subtitulo{
+            margin-top: 30px;
         }
         dd{
             margin-bottom: 10px;
@@ -22,7 +25,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="row">
         <div class="col-xs-3">
@@ -44,17 +46,40 @@
         </div>
     </div>
     <div class="row pedido">
-        <div class="col-xs-4 col-xs-offset-1">
+        <div class="col-xs-4">
             <dt>Fecha:</dt><dd>{{$pedido->createdAt}}</dd>
+        </div>
+        <div class="col-xs-4">
             <dt>Ciudad:</dt><dd>{{$pedido->ciudad}}</dd>
+        </div>
+        <div class="col-xs-4">
             <dt>Institución:</dt><dd>{{$pedido->institucion}}</dd>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
             <dt>Asunto:</dt><dd>{{$pedido->asunto}}</dd>
+        </div>
+        @if($pedido->comentario)
+        <div class="col-xs-6">
             <dt>Comentario:</dt><dd>{{$pedido->comentario}}</dd>
         </div>
-        <div class="col-xs-4 col-xs-offset-1">
+        @endif
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
             <dt>Contacto:</dt><dd>{{$pedido->contacto->nombre}}</dd>
+        </div>
+        <div class="col-xs-4">
             <dt>Cargo:</dt><dd>{{$pedido->contacto->cargo}}</dd>
+        </div>
+        <div class="col-xs-4">
             <dt>Celular:</dt><dd>{{$pedido->contacto->celular}}</dd>
+        </div>
+    </div>
+    <div class="row subtitulo">
+        <div class="col-xs-12 h5 text-title-primary">
+            Lista de productos
         </div>
     </div>
     <div class="row detalle">
@@ -66,6 +91,10 @@
                         <th class="text-center">Descripcion</th>
                         <th class="text-center">Unidad</th>
                         <th class="text-center">Cantidad</th>
+                        @if($esOperador)
+                            <th class="text-center">Precio</th>
+                            <th class="text-center">Sub total</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -75,6 +104,10 @@
                             <td>{{$producto->producto->nombre}} - {{$producto->producto->presentacion->nombre}}</td>
                             <td class="text-center">{{$producto->producto->unidad}}</td>
                             <td class="text-center">{{$producto->cantidad}}</td>
+                            @if($esOperador)
+                                <td class="text-right">{{$producto->precio}}</td>
+                                <td class="text-right">{{$producto->monto}}</td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

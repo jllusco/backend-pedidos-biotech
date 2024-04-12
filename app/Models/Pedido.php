@@ -18,10 +18,12 @@ class Pedido extends BaseModel
         'id',
         'codigo',
         'usuario_solicitante_id',
+        'nombre_usuario_solicitante',
         'fecha',
         'monto_total',
         'fecha_entrega',
         'usuario_entrega_id',
+        'nombre_usuario_entrega',
         'estado',
         'tipo',
         'sub_tipo',
@@ -33,4 +35,7 @@ class Pedido extends BaseModel
         'contacto'
     ];
 
+    public function solicitante(){
+        return $this->belongsTo(User::class,'usuario_solicitante_id');
+    }
 }

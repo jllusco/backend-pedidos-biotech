@@ -45,7 +45,7 @@ class StoreUsuarioRequest extends FormRequest
      */
     public function rules(): array
     {
-        //dump($this->all());die;
+
         return [
             'name' => ['required','unique:users','min:4'],
             'numeroDocumento' => ['required','min:4'],

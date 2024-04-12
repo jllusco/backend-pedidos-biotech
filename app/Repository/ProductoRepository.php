@@ -18,14 +18,22 @@ class ProductoRepository
         if(isset($request['codigo'])){
             $query->where('codigo','like','%'.$request['codigo'].'%');
         }
-        if(isset($request['nombre'])){
-            $query->where('nombre','like','%'.$request['nombre'].'%');
-        }
-        if(isset($request['descripcion'])){
-            $query->where('descripcion','like','%'.$request['descripcion'].'%');
+        if(isset($request['search'])){
+            $query->where('codigo','like','%'.$request['search'].'%')
+            ->orWhere('nombre','like','%'.$request['search'].'%');
+        }else{
+            if(isset($request['nombre'])){
+                $query->where('nombre','like','%'.$request['nombre'].'%');
+            }
+            if(isset($request['descripcion'])){
+                $query->where('descripcion','like','%'.$request['descripcion'].'%');
+            }
         }
         if(isset($request['oferta'])){
             $query->where('oferta','=',intval($request['oferta']));
+        }
+        if(isset($request['tipo'])){
+            $query->where('tipo','=',$request['tipo']);
         }
         if(isset($request['estado'])){
             $query->where('estado','=',$request['estado']);

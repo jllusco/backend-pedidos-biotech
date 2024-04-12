@@ -13,7 +13,7 @@ class PedidoRepository
 {
     public function findAll($request){
 
-        $query = Pedido::query();
+        $query = Pedido::with('solicitante');
 
         if(isset($request['codigo'])){
             $query->where('codigo','like','%'.$request['codigo'].'%');
@@ -29,6 +29,9 @@ class PedidoRepository
         }
         if(isset($request['estado'])){
             $query->where('estado','=',$request['estado']);
+        }
+        if(isset($request['created_by'])){
+            $query->where('created_by','=',$request['created_by']);
         }
 
         $query->addSelect([

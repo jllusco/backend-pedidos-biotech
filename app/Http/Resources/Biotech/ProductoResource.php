@@ -24,6 +24,7 @@ class ProductoResource extends JsonResource
             'temperatura'=>$this->temperatura,
             'unidad'=>$this->unidad,
             'oferta'=>$this->oferta,
+            'tipo'=>$this->tipo,
             'presentacionId'=>$this->presentacion_id,
             'presentacion'=> new ParametroResource($this->whenLoaded('presentacion')),
             'registroSanitatioId'=>$this->presenteacion_id,

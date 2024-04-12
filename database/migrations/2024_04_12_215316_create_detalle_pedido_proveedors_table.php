@@ -8,12 +8,12 @@ return new class extends BaseMigration
     public function __construct()
     {
         parent::__construct();
-        $this->table = 'detalle_pedido';
+        $this->table = 'detalle_pedido_proveedor';
     }
 
     protected function additionalColumns(Blueprint $table)
     {
-        $table->uuid('pedido_id');
+        $table->uuid('pedido_proveedor_id');
         $table->uuid('producto_id');
         $table->integer('cantidad');
         $table->enum('tipo_producto',['CONSUMIBLE','REACTIVO','RUO']);
