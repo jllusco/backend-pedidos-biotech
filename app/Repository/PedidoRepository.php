@@ -18,15 +18,6 @@ class PedidoRepository
         if(isset($request['codigo'])){
             $query->where('codigo','like','%'.$request['codigo'].'%');
         }
-        if(isset($request['nombre'])){
-            $query->where('nombre','like','%'.$request['nombre'].'%');
-        }
-        if(isset($request['descripcion'])){
-            $query->where('descripcion','like','%'.$request['descripcion'].'%');
-        }
-        if(isset($request['oferta'])){
-            $query->where('oferta','=',intval($request['oferta']));
-        }
         if(isset($request['estado'])){
             $query->where('estado','=',$request['estado']);
         }

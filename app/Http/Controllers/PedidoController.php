@@ -34,7 +34,7 @@ class PedidoController extends Controller
             if(!$request->user()->tokenCan('pedidos:listar:todo')){
                 $params['created_by'] = $request->user()->id;
             }
-            $pedidos = $this->pedidoRepository->findAll($request->query->all());
+            $pedidos = $this->pedidoRepository->findAll($params);
             return ApiResponse::success( new PedidoCollection($pedidos));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
@@ -110,8 +110,10 @@ class PedidoController extends Controller
             if($pedido->estado !== 'SOLICITADO'){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
+            $usuario = $request->user();
             $datos=[
-                'usuario_entrega_id'=> $request->user()->id,
+                'usuario_atencio_id'=> $request->user()->id,
+                'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'estado'=>'EN CURSO',
             ];
             $pedido->update($datos);

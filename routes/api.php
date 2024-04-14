@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RegistroSanitarioController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PedidoProveedorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,12 +114,19 @@ Route::group([
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos','index');
         Route::post('pedidos','store');
-        Route::post('pedidos/pial','generarPial');
         Route::get('pedidos/{pedido}','show');
         Route::put('pedidos/{pedido}/enviar','enviar');
         Route::put('pedidos/{pedido}/atencion','recepcionar');
         Route::get('pedidos/{pedido}/pdf','generarPdf');
         Route::get('pedidos/{pedido}/excel-opa','generarPdfOpa');
+    });
+
+    Route::controller(PedidoProveedorController::class)->group(function(){
+        Route::get('pial','index');
+        Route::post('pial','store');
+        Route::get('pial/{pedidoProveedor}','show');
+        Route::get('pial/{pedidoProveedor}/pdf','generarPdf');
+        Route::get('pial/{pedidoProveedor}/excel','generarExcel');
     });
 });
 

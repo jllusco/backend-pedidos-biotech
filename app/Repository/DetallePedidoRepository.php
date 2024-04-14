@@ -22,7 +22,7 @@ class DetallePedidoRepository
 
     public function getByPedidosPial($idPedidos){
         $query = DetallePedido::query();
-        $query->selectRaw('producto_id, producto.precio_unitario, producto.tipo, SUM(cantidad) as cantidad')
+        $query->selectRaw('producto_id, producto.precio_exwork, producto.tipo, SUM(cantidad) as cantidad')
             ->join('producto', 'producto.id', '=', 'producto_id')
             ->groupBy('producto_id');
         return $query->get();

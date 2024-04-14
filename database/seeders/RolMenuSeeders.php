@@ -66,6 +66,12 @@ class RolMenuSeeders extends Seeder
                 'menu_id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolSuperAdmin,
+                'menu_id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
             
 
             // ADMINISTRADOR
@@ -93,6 +99,12 @@ class RolMenuSeeders extends Seeder
                 'menu_id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolAdmin,
+                'menu_id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
 
             // ALMACEN
             [
@@ -111,6 +123,12 @@ class RolMenuSeeders extends Seeder
                 'id'=> (string)Str::uuid(),
                 'rol_id'=>$rolAlmacen,
                 'menu_id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolAlmacen,
+                'menu_id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
 

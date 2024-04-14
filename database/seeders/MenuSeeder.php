@@ -77,6 +77,15 @@ class MenuSeeder extends Seeder
                 'orden'=>10,
                 'estado'=>'ACTIVO',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
+                'nombre'=>'PIAL',
+                'ruta'=>'pial',
+                'icono'=>'content_paste',
+                'orden'=>11,
+                'estado'=>'ACTIVO',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ]
         ];
 
