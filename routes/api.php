@@ -26,12 +26,12 @@ use App\Http\Controllers\PedidoProveedorController;
 */
 
 Route::group(['prefix'=>'publico'],function(){
-    Route::controller(PedidoController::class)->group(function (){
+    /*Route::controller(PedidoController::class)->group(function (){
         Route::get('codigo','generarCodigo');
         Route::get('pdf/{pedido}','generarPdf');
         Route::get('pedidos/{pedido}/excel','generarPdfOpa');
         Route::post('pedidos/pial','generarPial');
-    });
+    });*/
 });
 
 Route::group(['prefix'=>'auth'],function(){
@@ -117,8 +117,9 @@ Route::group([
         Route::get('pedidos/{pedido}','show');
         Route::put('pedidos/{pedido}/enviar','enviar');
         Route::put('pedidos/{pedido}/atencion','recepcionar');
+        Route::put('pedidos/{pedido}/cancelar','cancelar');
         Route::get('pedidos/{pedido}/pdf','generarPdf');
-        Route::get('pedidos/{pedido}/excel-opa','generarPdfOpa');
+        Route::get('pedidos/{pedido}/excel-opa','generarExcel');
     });
 
     Route::controller(PedidoProveedorController::class)->group(function(){

@@ -18,7 +18,7 @@ class DetallePedido extends BaseModel
         'id',
         'pedido_id',
         'producto_id',
-        'tipo',
+        'tipo_producto',
         'cantidad',
         'precio',
         'monto'

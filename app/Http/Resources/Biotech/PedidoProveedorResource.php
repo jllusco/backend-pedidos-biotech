@@ -23,7 +23,7 @@ class PedidoProveedorResource extends JsonResource
             'tipo'=>$this->tipo,
             'createdAt'=>$this->created_at,
             'asunto'=>$this->asunto,
-            'comentatio'=>$this->comentatio,
+            'comentario'=>$this->comentario,
             'createdBy'=>$this->created_by
         ];
     }

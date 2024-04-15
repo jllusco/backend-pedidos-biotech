@@ -18,10 +18,12 @@ class PedidoResource extends JsonResource
             'id'=>$this->id,
             'codigo'=>$this->codigo,
             'usuarioSolicitanteId'=>$this->usuario_solicitante_id,
+            'nombreUsuarioSolicitante'=>$this->nombre_usuario_solicitante,
             'fecha'=>$this->fecha,
             'montoTotal'=>$this->monto_total,
             'fechaEntrega'=>$this->fecha_enterga,
-            'usuarioEntregaId'=>$this->usuario_entrega_id,
+            'usuarioAtencionId'=>$this->usuario_atencion_id,
+            'nombreUsuarioAtencion'=>$this->nombre_usuario_atencion,
             'estado'=>$this->estado,
             'tipo'=>$this->tipo,
             'subTipo'=>$this->sub_tipo,
@@ -30,7 +32,7 @@ class PedidoResource extends JsonResource
             'ciudad'=>$this->ciudad,
             'institucion'=>$this->institucion,
             'asunto'=>$this->asunto,
-            'comentatio'=>$this->comentatio,
+            'comentario'=>$this->comentario,
             'contacto'=>$this->contacto,
             'createdBy'=>$this->created_by
         ];

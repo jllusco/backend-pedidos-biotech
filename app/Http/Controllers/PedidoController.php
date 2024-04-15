@@ -46,6 +46,9 @@ class PedidoController extends Controller
         try {
             $datos = $request->request->all();
             $productos = $request->get('productos');
+            if(count($productos)===0){
+                return ApiResponse::error('El pedido debe tener al menos un producto');
+            }
             $montoTotal = $this->getMontoTotal($productos);
             $datos['monto_total'] = $montoTotal;
             $datos['contacto']= json_encode($datos['contacto']);
@@ -55,6 +58,7 @@ class PedidoController extends Controller
                     'pedido_id'=>$pedido->id,
                     'producto_id'=>$producto['id'],
                     'cantidad'=>$producto['cantidadSolicitada'],
+                    'tipo_producto'=>$producto['tipo'],
                     'precio'=>$producto['precioUnitario'],
                     'monto'=>intval($producto['cantidadSolicitada'])* doubleval($producto['precioUnitario']),
                     'created_by'=>$request->user()->id
@@ -92,10 +96,12 @@ class PedidoController extends Controller
             if($pedido->estado !== 'CREADO'){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
+            $usuario = $request->user();
             $datos=[
                 'codigo'=>$this->generarCodigo(),
                 'fecha'=>Carbon::now(),
-                'usuario_solicitante_id'=> $request->user()->id,
+                'usuario_solicitante_id'=> $usuario->id,
+                'nombre_usuario_solicitante'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'estado'=>'SOLICITADO',
             ];
             $pedido->update($datos);
@@ -112,7 +118,7 @@ class PedidoController extends Controller
             }
             $usuario = $request->user();
             $datos=[
-                'usuario_atencio_id'=> $request->user()->id,
+                'usuario_atencion_id'=> $usuario->id,
                 'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'estado'=>'EN CURSO',
             ];
@@ -174,7 +180,7 @@ class PedidoController extends Controller
         return $base64Uri;
     }
 
-    public function generarPdfOpa(Pedido $pedido){
+    public function generarExcel(Pedido $pedido){
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
             $montoTotal = array_reduce($productos->toArray(), function ($carry, $item){
@@ -186,7 +192,7 @@ class PedidoController extends Controller
                 'B6'=> Carbon::parse($pedido->fecha)->format('d/m/Y'),
                 'B7'=> $pedido->institucion,
                 'B8'=> $pedido->ciudad,
-                'B9'=> $pedido->created_by,
+                'B9'=> $pedido->nombre_usario_solicitante,
                 'B10'=> $pedido->asunto,
                 'B11'=>$pedido->comentario,
                 'G6'=>$pedido->contacto->nombre,
