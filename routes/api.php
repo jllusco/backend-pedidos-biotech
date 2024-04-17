@@ -55,6 +55,7 @@ Route::group([
     Route::controller(UsuarioController::class)->group(function (){
         Route::get('usuarios','index');
         Route::get('usuarios/{user}','show');
+        Route::put('usuarios/{user}','update');
         Route::post('usuarios','store');
         Route::patch('usuarios/{user}/estado','updateEstado');
         Route::patch('usuarios/contrasena','updateContrasena');

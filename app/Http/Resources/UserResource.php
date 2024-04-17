@@ -25,6 +25,7 @@ class UserResource extends JsonResource
         return [
             'id'=>$this->id,
             'usuario'=>$this->name,
+            'tipoDocumento'=>$this->tipo_documento,
             'numeroDocumento'=>$this->numero_documento,
             'nombres'=>$this->nombres,
             'primerApellido'=>$this->primer_apellido,
@@ -32,6 +33,8 @@ class UserResource extends JsonResource
             'correoElectronico'=>$this->correo_electronico,
             'celular'=>$this->celular,
             'estado'=>$this->estado,
+            'departamento'=>$this->departamento,
+            'institucion'=>$this->institucion,
             'rolId'=>$this->rol_id,
             'rol'=> new RolResource($this->whenLoaded('rol'))
         ];

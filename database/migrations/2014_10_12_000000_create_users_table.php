@@ -15,6 +15,7 @@ return new class extends BaseMigration
     {
         $table->string('name')->unique();
         $table->string('password');
+        $table->enum('tipo_documento',['CI','CE'])->default('CI');
         $table->string('numero_documento',15);
         $table->string('nombres',100);
         $table->string('primer_apellido',100)->nullable();
@@ -23,7 +24,8 @@ return new class extends BaseMigration
         $table->string('celular')->nullable();
         $table->uuid('rol_id');
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
-
+        $table->string('institucion',250)->nullable();
+        $table->string('departamento',50)->nullable();
         $table->foreign('rol_id')->references('id')->on('rol');
     }
 };

@@ -26,6 +26,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'nombres',
+        'tipo_documento',
         'numero_documento',
         'primer_apellido',
         'segundo_apellido',
@@ -34,6 +35,8 @@ class User extends Authenticatable
         'rol_id',
         'correo_electronico',
         'password',
+        'departamento',
+        'institucion'
     ];
 
     /**

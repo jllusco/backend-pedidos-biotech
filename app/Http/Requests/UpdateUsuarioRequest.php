@@ -38,7 +38,6 @@ class UpdateUsuarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','unique:users','min:4'],
             'numeroDocumento' => ['required','min:4'],
             'nombres' => ['required'],
             'primerApellido'=>['nullable'],
