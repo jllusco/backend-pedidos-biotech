@@ -144,6 +144,12 @@ class RolMenuSeeders extends Seeder
                 'rol_id'=>$rolCliente,
                 'menu_id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolCliente,
+                'menu_id'=>'b2dd187d-902a-4861-bb81-0352491445f7',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ]
         ];
 

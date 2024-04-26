@@ -13,6 +13,8 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RegistroSanitarioController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PedidoProveedorController;
+use App\Http\Controllers\DetallePedidoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -115,12 +117,22 @@ Route::group([
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos','index');
         Route::post('pedidos','store');
+        Route::post('pedidos/prueba','prueba');
         Route::get('pedidos/{pedido}','show');
         Route::put('pedidos/{pedido}/enviar','enviar');
         Route::put('pedidos/{pedido}/atencion','recepcionar');
+        Route::put('pedidos/{pedido}/pendiente','pendiente');
+        //Route::put('pedidos/{pedido}/entregado','entregado');
+        Route::put('pedidos/{pedido}/confirmar','confirmar');
         Route::put('pedidos/{pedido}/cancelar','cancelar');
         Route::get('pedidos/{pedido}/pdf','generarPdf');
         Route::get('pedidos/{pedido}/excel-opa','generarExcel');
+    });
+
+    Route::controller(DetallePedidoController::class)->group(function(){
+        Route::delete('detalle-pedido/{detallePedido}','destroy');
+        Route::patch('detalle-pedido/{detallePedido}/cantidad','updateCantidad');
+        Route::patch('detalle-pedido/{detallePedido}/precio','updatePrecio');
     });
 
     Route::controller(PedidoProveedorController::class)->group(function(){

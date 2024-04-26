@@ -17,7 +17,7 @@ return new class extends BaseMigration
         $table->uuid('producto_id');
         $table->integer('cantidad');
         $table->enum('tipo_producto',['CONSUMIBLE','REACTIVO','RUO']);
-        $table->decimal('precio',8,2);
-        $table->decimal('monto',8,2);
+        $table->decimal('precio',10,2);
+        $table->decimal('monto',10,2);
     }
 };

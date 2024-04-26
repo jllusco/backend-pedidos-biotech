@@ -17,11 +17,11 @@ return new class extends BaseMigration
         $table->uuid('usuario_solicitante_id')->nullable();
         $table->string('nombre_usuario_solicitante')->nullable();
         $table->timestamp('fecha')->nullable();
-        $table->decimal('monto_total',8,2)->nullable();
+        $table->decimal('monto_total',10,2)->nullable();
         $table->timestamp('fecha_entrega')->nullable();
         $table->uuid('usuario_atencion_id')->nullable();
         $table->string('nombre_usuario_atencion')->nullable();
-        $table->enum('estado',['CREADO','SOLICITADO','EN CURSO','COMPLETADO','CANCELADO'])->default('CREADO');
+        $table->enum('estado',['CREADO','SOLICITADO','EN CURSO','PENDIENTE','CONFIRMADO','COMPLETADO','CANCELADO'])->default('CREADO');
         $table->enum('tipo',['CLIENTE','OPERDAROR'])->default('CLIENTE');
         $table->enum('metodo_pago',['EFECTIVO','TRANSFERENCIA','QR','TARJETA DE CREDITO'])->default('EFECTIVO')->nullable();
         $table->string('ciudad',20)->nullable();

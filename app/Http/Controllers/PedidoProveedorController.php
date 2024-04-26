@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
 use App\Models\DetallePedidoProveedor;
+use App\Models\HistorialEstadoPedido;
 use App\Models\Pedido;
 use App\Models\PedidoProveedor;
 use App\Http\Resources\Biotech\DetallePedidoProveedorCollection;
 use App\Http\Resources\Biotech\PedidoProveedorCollection;
 use App\Http\Resources\Biotech\PedidoProveedorResource;
+use App\Models\PedidoProveedorPedido;
 use App\Repository\DetallePedidoProveedorRepository;
 use App\Repository\DetallePedidoRepository;
 use App\Repository\PedidoProveedorRepository;
@@ -47,10 +49,10 @@ class PedidoProveedorController extends Controller
     public function store(Request $request)
     {
         try {
-            $pedidos = Pedido::query()->where('estado','=','EN CURSO')->get();
+            $pedidos = Pedido::query()->where('estado','=','CONFIRMADO')->get();
             $idPedidos = $pedidos->pluck('id')->toArray();
             if(count($idPedidos)===0)
-                return ApiResponse::error('No existen pedidos en estado EN CURSO');
+                return ApiResponse::error('No existen pedidos en estado CONFIRMADO');
             $productos = new Collection($this->detallePedidoRepository->getByPedidosPial($idPedidos)->toArray());
             $tipos = ['CONSUMIBLE','REACTIVO','RUO'];
             $usuario = $request->user();
@@ -85,11 +87,26 @@ class PedidoProveedorController extends Controller
                         'created_by'=>$request->user()->id
                     ]);
                 }
+                foreach ($idPedidos as $idPedido){
+                    PedidoProveedorPedido::create([
+                        'pedido_id'=>$idPedido,
+                        'pedido_proveedor_id'=>$pial->id
+                    ]);
+                }
             }
+            $usuario = $request->user();
             /** @var Pedido $pedido */
             foreach($pedidos as $pedido){
                 $pedido->estado = 'COMPLETADO';
+                $pedido->usuario_atencion_id = $usuario->id;
+                $pedido->nombre_usuario_atencion= trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
                 $pedido->save();
+                HistorialEstadoPedido::create([
+                    'pedido_id'=>$pedido->id,
+                    'estado'=>'COMPLETADO',
+                    'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+                    'rol_usuario'=>$usuario->rol->nombre
+                ]);
             }
             return ApiResponse::success(true);
         } catch (\Exception $e) {

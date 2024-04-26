@@ -29,7 +29,8 @@ class PedidoRepository
             'total_productos'=>function($subQuery){
                 $subQuery->selectRaw('COUNT(1)')
                     ->from('detalle_pedido')
-                    ->whereColumn('pedido_id', 'pedido.id');
+                    ->whereColumn('pedido_id', 'pedido.id')
+                    ->whereNull('deleted_at');
             }]);
 
         $query->orderBy('created_at','DESC');
@@ -37,7 +38,7 @@ class PedidoRepository
     }
 
     public function getCantidad($anio,$mes){
-        return Pedido::query()->whereYear('fecha',$anio)->whereMonth('fecha',$mes)->count();
+        return Pedido::query()->whereYear('fecha',$anio)->count();
     }
 
 

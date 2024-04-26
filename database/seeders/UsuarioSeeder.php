@@ -27,7 +27,9 @@ class UsuarioSeeder extends Seeder
                 'primer_apellido'=>'BIOTECH',
                 'segundo_apellido'=>null,
                 'correo_electronico'=>'admin@example.com',
-                'rol_id'=>'450f3f9a-d10a-475f-8828-82d0057652c3'
+                'rol_id'=>'450f3f9a-d10a-475f-8828-82d0057652c3',
+                'institucion'=>'BIOTECH',
+                'departamento'=>'COCHABAMBA'
             ],
             [
                 'id'=>(string)Str::uuid(),
@@ -38,7 +40,9 @@ class UsuarioSeeder extends Seeder
                 'primer_apellido'=>'ALMACEN',
                 'segundo_apellido'=>'BIOTECH',
                 'correo_electronico'=>'almacen@biotech.com',
-                'rol_id'=>'3d12cb09-91f2-43aa-be60-bbf322116a07'
+                'rol_id'=>'3d12cb09-91f2-43aa-be60-bbf322116a07',
+                'institucion'=>'BIOTECH',
+                'departamento'=>'COCHABAMBA'
             ],
             [
                 'id'=>(string)Str::uuid(),
@@ -49,7 +53,9 @@ class UsuarioSeeder extends Seeder
                 'primer_apellido'=>'BIOTECH',
                 'segundo_apellido'=>null,
                 'correo_electronico'=>'cliente@biotech.com',
-                'rol_id'=>'70796247-01c3-469f-9fae-cd6082ebad86'
+                'rol_id'=>'70796247-01c3-469f-9fae-cd6082ebad86',
+                'institucion'=>'CAJA NACIONAL DE SALUD',
+                'departamento'=>'LA PAZ'
             ]
         ];
 

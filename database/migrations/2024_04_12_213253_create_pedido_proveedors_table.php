@@ -20,7 +20,7 @@ return new class extends BaseMigration
         $table->enum('tipo',['CONSUMIBLE','REACTIVO','RUO']);
         $table->string('asunto',250)->nullable();
         $table->string('comentario',250)->nullable();
-        $table->decimal('monto_total',8,2)->nullable();
+        $table->decimal('monto_total',10,2)->nullable();
         $table->uuid('proveedor_id');
         $table->enum('moneda',['DOLARES','BOLIVIANOS'])->default('DOLARES');
     }

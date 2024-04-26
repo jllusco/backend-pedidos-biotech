@@ -27,4 +27,8 @@ class DetallePedido extends BaseModel
     public function producto(){
         return $this->belongsTo(Producto::class);
     }
+
+    public function pedido(){
+        return $this->belongsTo(Pedido::class);
+    }
 }

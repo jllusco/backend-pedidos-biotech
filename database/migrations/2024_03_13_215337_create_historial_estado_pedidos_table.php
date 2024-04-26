@@ -14,6 +14,8 @@ return new class extends BaseMigration
     protected function additionalColumns(Blueprint $table)
     {
         $table->uuid('pedido_id');
-        $table->enum('estado',['CREADO','SOLICITADO','EN CURSO','COMPLETADO','CANCELADO'])->default('CREADO');
+        $table->enum('estado',['CREADO','SOLICITADO','EN CURSO','PENDIENTE','CONFIRMADO','COMPLETADO','CANCELADO'])->default('CREADO');
+        $table->string('nombre_usuario');
+        $table->string('rol_usuario');
     }
 };

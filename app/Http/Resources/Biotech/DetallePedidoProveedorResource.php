@@ -20,7 +20,7 @@ class DetallePedidoProveedorResource extends JsonResource
             'id'=>$this->id,
             'pedidoProveedorId'=>$this->pedido_proveedor_id,
             'productoId'=>$this->producto_id,
-            'tipo'=>$this->tipo,
+            'tipoProducto'=>$this->tipo_producto,
             'cantidad'=>$this->cantidad,
             'precio'=>$this->precio,
             'monto'=>$this->monto,

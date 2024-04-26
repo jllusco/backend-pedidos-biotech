@@ -18,8 +18,8 @@ return new class extends BaseMigration
         $table->text('descripcion');
         $table->string('ruta_imagen',200)->default('image/productos/product-default.png');
         $table->integer('cantidad_actual')->length(4)->default(0);
-        $table->decimal('precio_unitario',8,2)->default(0.00);
-        $table->decimal('precio_exwork',8,2)->default(0.00);
+        $table->decimal('precio_unitario',10,2)->default(0.00);
+        $table->decimal('precio_exwork',10,2)->default(0.00);
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
         $table->enum('unidad',['CAJA','FRASCO','KIT','UNIDAD'])->default('UNIDAD');
         $table->enum('tipo',['CONSUMIBLE','REACTIVO','RUO']);

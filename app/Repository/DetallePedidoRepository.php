@@ -27,4 +27,19 @@ class DetallePedidoRepository
             ->groupBy('producto_id');
         return $query->get();
     }
+
+    public function cantidadProductosSinMonto($idPedido){
+        $query = DetallePedido::where('monto','=',0)
+            ->where('pedido_id','=',$idPedido)
+            ->whereNull('deleted_at')
+            ->count();
+        return $query;
+    }
+
+    public function montoTotal($idPedido){
+        $query = DetallePedido::where('pedido_id','=',$idPedido)
+            ->whereNull('deleted_at')
+            ->sum('monto');
+        return $query;
+    }
 }
