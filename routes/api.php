@@ -15,7 +15,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PedidoProveedorController;
 use App\Http\Controllers\DetallePedidoController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,6 +25,14 @@ use App\Http\Controllers\DetallePedidoController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('status', function () {
+    return response()->json([
+        'mensaje'=>'Servicio api biotech funcionando correctamente',
+        'fecha_actual' => \Carbon\Carbon::now(),
+        'version'=>'1.0.0'
+    ]);
+});
 
 Route::group(['prefix'=>'publico'],function(){
     /*Route::controller(PedidoController::class)->group(function (){
@@ -48,6 +55,7 @@ Route::group([
 ],function(){
     Route::controller(ParametroController::class)->group(function (){
         Route::get('parametros','index');
+        Route::get('parametros/grupos','grupos');
         Route::post('parametros','store');
         Route::get('parametros/{parametro}','show');
         Route::put('parametros/{parametro}','update');

@@ -22,6 +22,7 @@ return new class extends BaseMigration
         $table->string('segundo_apellido',100)->nullable();
         $table->string('correo_electronico')->nullable();
         $table->string('celular')->nullable();
+        $table->boolean('sistema')->default(false);
         $table->uuid('rol_id');
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
         $table->string('institucion',250)->nullable();

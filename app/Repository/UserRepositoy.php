@@ -24,6 +24,12 @@ class UserRepositoy
         if(isset($request['primerApellido'])){
             $query->where('primer_apellido','like','%'.$request['primerApellido'].'%');
         }
+        if(isset($request['estado'])){
+            $query->where('estado','=',$request['estado']);
+        }
+        if(isset($request['institucion'])){
+            $query->where('institucion','like','%'.$request['institucion'].'%');
+        }
         return $query->paginate($request['limit']??10);
     }
 }

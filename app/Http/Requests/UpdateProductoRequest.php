@@ -23,7 +23,8 @@ class UpdateProductoRequest extends FormRequest
             'categoria_id'=>$this->categoriaId,
             'proveedor_id'=>$this->proveedorId,
             'presentacion_id'=>$this->presentacionId,
-            'registro_sanitario_id'=>$this->registroSanitarioId
+            'registro_sanitario_id'=>$this->registroSanitarioId,
+            'precio_exwork'=>$this->precioExwork
         ]);
     }
 
@@ -42,6 +43,7 @@ class UpdateProductoRequest extends FormRequest
             'tipo'=>['required'],
             'proveedorId'=>['required'],
             'presentacionId'=>['required'],
+            'precioExwork'=>['required']
         ];
     }
 

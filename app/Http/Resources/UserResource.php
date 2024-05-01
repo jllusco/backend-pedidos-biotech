@@ -35,6 +35,7 @@ class UserResource extends JsonResource
             'estado'=>$this->estado,
             'departamento'=>$this->departamento,
             'institucion'=>$this->institucion,
+            'sistema'=>$this->sistema,
             'rolId'=>$this->rol_id,
             'rol'=> new RolResource($this->whenLoaded('rol'))
         ];

@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreRegistroSanitarioRequest extends FormRequest
 {
@@ -11,7 +14,15 @@ class StoreRegistroSanitarioRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return !!$this->user();
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'fecha_emision'=>$this->fechaEmision,
+            'fecha_vencimiento'=>$this->fechaVencimiento
+        ]);
     }
 
     /**
@@ -22,7 +33,14 @@ class StoreRegistroSanitarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'numero' => ['required'],
+            'fechaEmision'=> ['required'],
+            'fechaVencimiento'=> ['required'],
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(ApiResponse::error($validator->errors()->first()));
     }
 }

@@ -30,4 +30,11 @@ class ParametroRepository
         }
         return $query->paginate($request['limit']??10);
     }
+
+    public function getGrupos(){
+        $query = Parametro::select('grupo')
+            ->groupBy('grupo')
+            ->get();
+        return $query;
+    }
 }

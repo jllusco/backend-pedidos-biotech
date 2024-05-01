@@ -20,6 +20,7 @@ class ProductoResource extends JsonResource
             'rutaImagen'=>$this->ruta_imagen,
             'cantidadActual'=>$this->cantidad_actual,
             'precioUnitario'=>$this->precio_unitario,
+            'precioExwork'=>$this->precio_exwork,
             'estado'=>$this->estado,
             'temperatura'=>$this->temperatura,
             'unidad'=>$this->unidad,

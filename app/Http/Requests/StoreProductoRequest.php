@@ -23,7 +23,8 @@ class StoreProductoRequest extends FormRequest
             'categoria_id'=>$this->categoriaId,
             'proveedor_id'=>$this->proveedorId,
             'presentacion_id'=>$this->presentacionId,
-            'registro_sanitario_id'=>$this->registroSanitarioId
+            'registro_sanitario_id'=>$this->registroSanitarioId,
+            'precio_exwork'=>$this->precioExwork
         ]);
     }
 
@@ -41,7 +42,8 @@ class StoreProductoRequest extends FormRequest
             'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
             'tipo'=>['required'],
             'proveedorId'=>['required'],
-            'presentacionId'=>['required']
+            'presentacionId'=>['required'],
+            'precioExwork'=>['required']
         ];
     }
 

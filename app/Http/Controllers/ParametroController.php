@@ -97,4 +97,13 @@ class ParametroController extends Controller
             return ApiResponse::exception($e);
         }
     }
+
+
+    public function grupos (){
+        try {
+            return  ["datos"=>$this->parametroRepository->getGrupos()->pluck('grupo')];
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
 }

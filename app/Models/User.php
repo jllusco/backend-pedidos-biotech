@@ -36,7 +36,8 @@ class User extends Authenticatable
         'correo_electronico',
         'password',
         'departamento',
-        'institucion'
+        'institucion',
+        'sistema'
     ];
 
     /**
