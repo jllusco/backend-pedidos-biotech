@@ -46,7 +46,6 @@ class ParametroController extends Controller
     {
         try {
             $parametro = new ParametroResource(Parametro::create($request->all()));
-            //return new RolResource(Rol::create($request->all()));
             return ApiResponse::success($parametro);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);

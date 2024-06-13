@@ -39,7 +39,7 @@ class ProductoRepository
             $query->where('estado','=',$request['estado']);
         }
 
-        $query->orderBy('created_at','DESC');
+        $query->orderBy('nombre','ASC');
         return $query->paginate($request['limit']??10);
     }
 }
