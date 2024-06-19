@@ -26,7 +26,8 @@ class UpdateUsuarioRequest extends FormRequest
             'primer_apellido'=>$this->primerApellido,
             'segundo_apellido'=>$this->segundoApellido,
             'correo_electronico'=>$this->correoElectronico,
-            'rol_id'=>$this->rolId
+            'rol_id'=>$this->rolId,
+            'lista_precio_id'=>$this->listaPrecioId
         ]);
     }
 

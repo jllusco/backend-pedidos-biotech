@@ -12,6 +12,7 @@ use App\Models\HistorialEstadoPedido;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Repository\DetallePedidoRepository;
+use App\Repository\HistorialEstadoPedidoRepository;
 use App\Repository\PedidoRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -23,11 +24,16 @@ class PedidoController extends Controller
 {
     private $pedidoRepository;
     private $detallePedidoRepository;
+    private $historialEstadoPedidoRepository;
 
-    public function __construct(PedidoRepository $pedidoRepository, DetallePedidoRepository $detallePedidoRepository)
+    public function __construct(PedidoRepository $pedidoRepository,
+                                DetallePedidoRepository $detallePedidoRepository,
+                                HistorialEstadoPedidoRepository $historialEstadoPedidoRepository
+    )
     {
         $this->pedidoRepository = $pedidoRepository;
         $this->detallePedidoRepository = $detallePedidoRepository;
+        $this->historialEstadoPedidoRepository = $historialEstadoPedidoRepository;
     }
 
     public function index(Request $request){
@@ -392,6 +398,25 @@ class PedidoController extends Controller
                 }
             }
             return ApiResponse::success(true);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function verHistorial (Pedido $pedido){
+        try {
+            $historial = $this->historialEstadoPedidoRepository->getByPedido($pedido->id);
+            return ApiResponse::success($historial);
+        } catch (\Exception $e) {
+        return ApiResponse::exception($e);
+        }
+    }
+
+    public function copiarPedido (Pedido $pedido){
+        try {
+            dd($pedido);
+            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            dd($productos);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }

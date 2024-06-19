@@ -1,19 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RolController;
-use App\Http\Controllers\ParametroController;
-use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\PermisoController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\DetallePedidoController;
+use App\Http\Controllers\ListaPrecioController;
+use App\Http\Controllers\ListaPrecioProductoController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\ParametroController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\PedidoProveedorController;
+use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RegistroSanitarioController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PedidoProveedorController;
-use App\Http\Controllers\DetallePedidoController;
+use App\Http\Controllers\RolController;
+use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +117,7 @@ Route::group([
 
     Route::controller(ProductoController::class)->group(function (){
         Route::get('productos','index');
+        Route::get('productos/cantidades-tipo','getCantidadesTipo');
         Route::get('productos/{producto}','show');
         Route::post('productos','store');
         Route::put('productos/{producto}','update');
@@ -122,10 +125,26 @@ Route::group([
         Route::patch('productos/{producto}/estado','updateEstado');
     });
 
+    Route::controller(ListaPrecioController::class)->group(function (){
+        $permiso = 'permission:listaPrecios';
+        Route::get('lista-precios','index')->middleware("$permiso:listar");
+        Route::get('lista-precios/{listaPrecio}','show')->middleware("$permiso:listar");
+        Route::post('lista-precios','store')->middleware("$permiso:crear");
+    });
+
+    Route::controller(ListaPrecioProductoController::class)->group(function (){
+        $ruta = 'lista-precio-productos';
+        $permiso = 'permission:listaPrecios';
+        Route::post($ruta,'store')->middleware("$permiso:actualizar");
+        Route::patch("$ruta/{listaPrecioProducto}/precio-unitario",'updatePrecioUnitario')->middleware("$permiso:actualizar");
+        Route::delete("$ruta/{listaPrecioProducto}",'destroy')->middleware("$permiso:actualizar");
+    });
+
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos','index');
         Route::post('pedidos','store');
         Route::post('pedidos/prueba','prueba');
+        Route::post('pedidos/{pedido}/copia','copiarPedido');
         Route::get('pedidos/{pedido}','show');
         Route::put('pedidos/{pedido}/enviar','enviar');
         Route::put('pedidos/{pedido}/atencion','recepcionar');
@@ -133,6 +152,7 @@ Route::group([
         //Route::put('pedidos/{pedido}/entregado','entregado');
         Route::put('pedidos/{pedido}/confirmar','confirmar');
         Route::put('pedidos/{pedido}/cancelar','cancelar');
+        Route::get('pedidos/{pedido}/historial','verHistorial');
         Route::get('pedidos/{pedido}/pdf','generarPdf');
         Route::get('pedidos/{pedido}/excel-opa','generarExcel');
     });

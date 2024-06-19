@@ -99,6 +99,17 @@ class ProductoController extends Controller
         }
     }
 
+    public function  getCantidadesTipo (){
+        try {
+            $cantidades = $this->productoRepository ->getCantidadesTipo();
+            $respuesta = $cantidades->pluck('count', 'tipo')->all();
+            $respuesta['TOTAL']= array_sum($respuesta);
+            return ApiResponse::success($respuesta);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
 
 
 

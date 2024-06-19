@@ -13,7 +13,7 @@ class UserRepositoy
 {
     public function findAll($request){
 
-        $query = User::with('rol');
+        $query = User::with(['rol','listaPrecio']);
 
         if(isset($request['usuario'])){
             $query->where('name','like','%'.$request['usuario'].'%');

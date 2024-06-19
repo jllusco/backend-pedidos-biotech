@@ -34,7 +34,8 @@ class StoreUsuarioRequest extends FormRequest
             'segundo_apellido'=>$this->segundoApellido,
             'correo_electronico'=>$this->correoElectronico,
             'password_confirmation'=>$this->confirmarContrasena,
-            'rol_id'=>$this->rolId
+            'rol_id'=>$this->rolId,
+            'lista_precio_id'=>$this->listaPrecioId
         ]);
     }
 

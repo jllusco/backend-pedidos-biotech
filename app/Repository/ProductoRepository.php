@@ -8,6 +8,7 @@
 namespace  App\Repository;
 
 use App\Models\Producto;
+use Illuminate\Support\Facades\DB;
 
 class ProductoRepository
 {
@@ -29,6 +30,9 @@ class ProductoRepository
                 $query->where('descripcion','like','%'.$request['descripcion'].'%');
             }
         }
+        if(isset($request['idCategoria'])){
+            $query->where('categoria_id','=',$request['idCategoria']);
+        }
         if(isset($request['oferta'])){
             $query->where('oferta','=',intval($request['oferta']));
         }
@@ -41,5 +45,11 @@ class ProductoRepository
 
         $query->orderBy('nombre','ASC');
         return $query->paginate($request['limit']??10);
+    }
+
+    public function getCantidadesTipo(){
+        return Producto::selectRaw('tipo, COUNT(*) as count')
+            ->groupBy('tipo')
+            ->get();
     }
 }

@@ -33,6 +33,7 @@ class User extends Authenticatable
         'celular',
         'estado',
         'rol_id',
+        'lista_precio_id',
         'correo_electronico',
         'password',
         'departamento',
@@ -83,4 +84,8 @@ class User extends Authenticatable
    public function rol(){
        return $this->belongsTo(Rol::class);
    }
+
+    public function listaPrecio(){
+        return $this->belongsTo(ListaPrecio::class);
+    }
 }

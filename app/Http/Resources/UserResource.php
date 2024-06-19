@@ -9,6 +9,7 @@
 namespace App\Http\Resources;
 
 
+use App\Http\Resources\Biotech\ListaPrecioResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -37,7 +38,9 @@ class UserResource extends JsonResource
             'institucion'=>$this->institucion,
             'sistema'=>$this->sistema,
             'rolId'=>$this->rol_id,
-            'rol'=> new RolResource($this->whenLoaded('rol'))
+            'rol'=> new RolResource($this->whenLoaded('rol')),
+            'listaPrecioId'=>$this->lista_precio_id,
+            'listaPrecio'=> new ListaPrecioResource($this->whenLoaded('listaPrecio')),
         ];
     }
 }
