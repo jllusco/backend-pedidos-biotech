@@ -6,56 +6,15 @@ use App\Helpers\ApiResponse;
 use App\Models\DetallePedido;
 use App\Http\Requests\StoreDetallePedidoRequest;
 use App\Http\Requests\UpdateDetallePedidoRequest;
+use App\Repository\DetallePedidoRepository;
 use Illuminate\Http\Request;
 
 class DetallePedidoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    private $detallePedidoRepository;
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreDetallePedidoRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(DetallePedido $detallePedido)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DetallePedido $detallePedido)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateDetallePedidoRequest $request, DetallePedido $detallePedido)
-    {
-        //
+    public function __construct(DetallePedidoRepository $detallePedidoRepository){
+        $this->detallePedidoRepository = $detallePedidoRepository;
     }
 
     /**
@@ -89,8 +48,10 @@ class DetallePedidoController extends Controller
             if(!$cantidad)
                 return ApiResponse::error('Falta el parametro cantidad');
             $detallePedido->update([
-                'cantidad'=>$cantidad
+                'cantidad'=>$cantidad,
+                'monto'=>$detallePedido->precio * $cantidad
             ]);
+            $pedido->update(['monto_total'=> $this->detallePedidoRepository->montoTotal($pedido->id)]);
             return ApiResponse::success(true);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
@@ -112,6 +73,7 @@ class DetallePedidoController extends Controller
                 'precio'=>round($precio,2),
                 'monto'=>round($precio,2)*$detallePedido->cantidad
             ]);
+            $pedido->update(['monto_total'=> $this->detallePedidoRepository->montoTotal($pedido->id)]);
             return ApiResponse::success(true);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);

@@ -26,6 +26,7 @@ class ProductoResource extends JsonResource
             'unidad'=>$this->unidad,
             'oferta'=>$this->oferta,
             'tipo'=>$this->tipo,
+            'rutaEspecificacionTecnica'=>$this->ruta_especificacion_tecnica,
             'presentacionId'=>$this->presentacion_id,
             'presentacion'=> new ParametroResource($this->whenLoaded('presentacion')),
             'registroSanitatioId'=>$this->presenteacion_id,

@@ -42,6 +42,17 @@ class ProductoRepository
         if(isset($request['estado'])){
             $query->where('estado','=',$request['estado']);
         }
+        if(isset($request['registroSanitario'])){
+            $tipoRegistroSanitario = $request['registroSanitario'];
+            if($tipoRegistroSanitario === 'SIN REGISTRO'){
+                $query->whereNull('registro_sanitario_id');
+            }
+            if($tipoRegistroSanitario === 'REGISTRO CADUCADO'){
+                $query->whereHas('registroSanitario',function ($subQuery) {
+                    $subQuery->where('fecha_vencimiento', '<', now());
+                });
+            }
+        }
 
         $query->orderBy('nombre','ASC');
         return $query->paginate($request['limit']??10);

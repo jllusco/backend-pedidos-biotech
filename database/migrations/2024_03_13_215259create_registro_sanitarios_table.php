@@ -17,6 +17,7 @@ return new class extends BaseMigration
         $table->date('fecha_emision');
         $table->date('fecha_vencimiento');
         $table->text('descripcion')->nullable();
+        $table->string('ruta_documento',200)->nullable();
         $table->enum('estado',['ACTIVO','INACTIVO'])->default('ACTIVO');
     }
 };

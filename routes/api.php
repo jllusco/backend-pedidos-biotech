@@ -123,6 +123,7 @@ Route::group([
         Route::put('productos/{producto}','update');
         Route::patch('productos/{producto}/imagen','updateImagen');
         Route::patch('productos/{producto}/estado','updateEstado');
+        Route::patch('productos/{producto}/especificacion-tecnica','updateEspecificacionTecnica');
     });
 
     Route::controller(ListaPrecioController::class)->group(function (){
@@ -135,6 +136,7 @@ Route::group([
     Route::controller(ListaPrecioProductoController::class)->group(function (){
         $ruta = 'lista-precio-productos';
         $permiso = 'permission:listaPrecios';
+        Route::get($ruta,'index')->middleware("$permiso:listar");
         Route::post($ruta,'store')->middleware("$permiso:actualizar");
         Route::patch("$ruta/{listaPrecioProducto}/precio-unitario",'updatePrecioUnitario')->middleware("$permiso:actualizar");
         Route::delete("$ruta/{listaPrecioProducto}",'destroy')->middleware("$permiso:actualizar");

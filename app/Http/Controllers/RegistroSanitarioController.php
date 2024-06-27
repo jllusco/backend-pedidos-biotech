@@ -8,12 +8,20 @@ use App\Http\Resources\RegistroSanitarioResource;
 use App\Models\RegistroSanitario;
 use App\Http\Requests\StoreRegistroSanitarioRequest;
 use App\Http\Requests\UpdateRegistroSanitarioRequest;
+use App\Repository\RegistroSanitarioRepository;
+use Illuminate\Http\Request;
 
 class RegistroSanitarioController extends Controller
 {
-    public function index(){
+    private $registroSanitarioRepository;
+
+    public function __construct(RegistroSanitarioRepository $registroSanitarioRepository){
+        $this->registroSanitarioRepository = $registroSanitarioRepository;
+    }
+
+    public function index(Request $request){
         try {
-            $registros = RegistroSanitario::paginate();
+            $registros = $this->registroSanitarioRepository->findAll($request->query->all());
             return ApiResponse::success( new RegistroSanitarioCollection($registros));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);

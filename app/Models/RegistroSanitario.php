@@ -18,7 +18,8 @@ class RegistroSanitario extends BaseModel
         'id',
         'numero',
         'fecha_emision',
-        'fecha_vencimiento'
+        'fecha_vencimiento',
+        'ruta_documento',
     ];
 
     public function producto()

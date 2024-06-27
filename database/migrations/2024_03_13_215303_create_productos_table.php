@@ -25,6 +25,7 @@ return new class extends BaseMigration
         $table->enum('tipo',['CONSUMIBLE','REACTIVO','RUO']);
         $table->jsonb('temperatura')->nullable()->default(null);
         $table->boolean('oferta')->default(false);
+        $table->string('ruta_especificacion_tecnica',200)->nullable();
         $table->uuid('categoria_id')->nullable();
         $table->uuid('proveedor_id')->nullable();
         $table->uuid('registro_sanitario_id')->nullable();

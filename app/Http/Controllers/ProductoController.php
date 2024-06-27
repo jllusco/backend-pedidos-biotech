@@ -86,6 +86,23 @@ class ProductoController extends Controller
         }
     }
 
+    public function updateEspecificacionTecnica(Producto $producto, Request $request){
+        try {
+            $pdf = $request->files->get('documento');
+            if(is_null($pdf)){
+                throw new \Exception('Debes enviar el documento',400);
+            }
+            $folder='documentos/productos';
+            $fileName = 'et-'.(string)Str::uuid().'.'.$pdf->getClientOriginalExtension();
+            $pdf->move($folder,$fileName);
+            $datos['ruta_especificacion_tecnica']= "$folder/$fileName";
+            $producto->update($datos);
+            return ApiResponse::success(new ProductoResource($producto));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
     public function updateEstado(Producto $producto, Request $request){
         try {
             $estado = $request->request->get('estado');

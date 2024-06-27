@@ -17,7 +17,13 @@ class DetallePedidoRepository
         $query = DetallePedido::with('producto');
         $query->where('pedido_id','=',$idPedido);
         $query->orderBy('created_at','DESC');
-        return $query->get();
+        $resultados = $query->get();
+
+        $resultados = $resultados->sortBy(function($item) {
+            return $item->producto->nombre;
+        });
+
+        return $resultados->values()->all();
     }
 
     public function getByPedidosPial($idPedidos){

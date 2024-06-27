@@ -19,7 +19,9 @@ class RegistroSanitarioResource extends JsonResource
             'numero'=>$this->numero,
             'fechaEmision'=>$this->fecha_emision,
             'fechaVencimiento'=>$this->fecha_vencimiento,
-            'estado'=>$this->estado
+            'estado'=>$this->estado,
+            'rutaDocumento'=>$this->ruta_documento,
+            'totalProductos'=>$this->total_productos
         ];
     }
 }

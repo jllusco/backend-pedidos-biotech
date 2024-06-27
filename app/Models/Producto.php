@@ -26,6 +26,7 @@ class Producto extends BaseModel
         'unidad',
         'temperatura',
         'registro_sanitario_id',
+        'ruta_especificacion_tecnica',
         'presentacion_id',
         'categoria_id',
         'proveedor_id',
