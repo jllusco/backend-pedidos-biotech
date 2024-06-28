@@ -60,6 +60,7 @@ class PedidoController extends Controller
             $montoTotal = $this->getMontoTotal($productos);
             $datos['monto_total'] = $montoTotal;
             $datos['contacto']= json_encode($datos['contacto']);
+            $datos['lista_precio_id']=$request->user()->lista_precio_id;
             $pedido = Pedido::create($datos);
             foreach ($productos as $producto) {
                 DetallePedido::create([
@@ -417,6 +418,15 @@ class PedidoController extends Controller
             dd($pedido);
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
             dd($productos);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function productosMasVendidos (){
+        try {
+            $productos = $this->detallePedidoRepository->getSumProductosVendidos();
+            return ApiResponse::success(new DetallePedidoCollection($productos));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }

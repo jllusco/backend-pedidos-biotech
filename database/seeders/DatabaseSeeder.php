@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
             ProveedorSeeder::class,
             CategoriaSeeder::class,
             // RegistroSanitarioSeeder::class,
-            ProductoSeeder::class
+            ProductoSeeder::class,
+            CronogramaSeeder::class
         ]);
     }
 }

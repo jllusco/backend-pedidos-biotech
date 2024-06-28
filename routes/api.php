@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\DetallePedidoController;
 use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\ListaPrecioProductoController;
@@ -100,6 +101,11 @@ Route::group([
     'prefix'=>'biotech',
     'middleware'=>'auth:sanctum'
 ],function(){
+    Route::controller(CronogramaController::class)->group(function (){
+        Route::get('cronogramas','index');
+        Route::put('cronogramas/{cronograma}','update');
+    });
+
     Route::controller(CategoriaController::class)->group(function (){
         Route::get('categorias','index');
         Route::post('categorias','store');
@@ -113,6 +119,9 @@ Route::group([
     Route::controller(RegistroSanitarioController::class)->group(function (){
         Route::get('registros-sanitarios','index');
         Route::post('registros-sanitarios','store');
+        Route::get('registros-sanitarios/{registroSanitario}','show');
+        Route::put('registros-sanitarios/{registroSanitario}','update');
+        Route::patch('registros-sanitarios/{registroSanitario}/documento','updateDocumento');
     });
 
     Route::controller(ProductoController::class)->group(function (){
@@ -181,6 +190,7 @@ Route::group([
 ],function(){
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos/cantidad','cantidades');
+        Route::get('pedidos/productos-vendidos','productosMasVendidos');
     });
 });
 

@@ -10,6 +10,7 @@ namespace App\Repository;
 
 
 use App\Models\DetallePedido;
+use Illuminate\Support\Facades\DB;
 
 class DetallePedidoRepository
 {
@@ -47,5 +48,18 @@ class DetallePedidoRepository
             ->whereNull('deleted_at')
             ->sum('monto');
         return $query;
+    }
+
+    public function  getSumProductosVendidos(){
+        $query = DetallePedido::with('producto')
+//            ->whereHas('pedido', function ($query) {
+//                $query->whereYear('created_at', now()->year)
+//                    ->whereMonth('created_at', now()->month);
+//            })
+            ->select('producto_id', DB::raw('SUM(cantidad) as cantidad  '))
+            ->groupBy('producto_id')
+            ->orderByDesc('cantidad');
+        return $query->paginate(5);
+
     }
 }
