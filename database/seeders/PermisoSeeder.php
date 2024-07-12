@@ -37,6 +37,17 @@ class PermisoSeeder extends Seeder
              ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c59','nombre'=>'pedidos:actualizar','descripcion'=>'Permiso para actualizar el pedido'],
              ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c60','nombre'=>'pial:crear','descripcion'=>'Permiso para crear pial'],
              ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c61','nombre'=>'pial:listar','descripcion'=>'Permiso para listar los piales'],
+
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c62','nombre'=>'listaPrecios:crear','descripcion'=>'Permiso para crear una lista de precio'],
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c63','nombre'=>'listaPrecios:listar','descripcion'=>'Permiso para listar las listas de precios'],
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c64','nombre'=>'listaPrecios:actualizar','descripcion'=>'Permiso para actualizar una lista de precio'],
+
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c65','nombre'=>'registroSanitario:crear','descripcion'=>'Permiso para crear un registro sanitario'],
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c66','nombre'=>'registroSanitario:listar','descripcion'=>'Permiso para listar los registros sanitarios'],
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c67','nombre'=>'registroSanitario:actualizar','descripcion'=>'Permiso para actualizar un registro sanitario'],
+
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c68','nombre'=>'cronograma:listar','descripcion'=>'Permiso para crear una lista los cronogramas'],
+             ['id'=>'ff077dcb-a058-45c1-8d17-903c4d701c69','nombre'=>'cronograma:actualizar','descripcion'=>'Permiso para actualizar un cronograma']
          ];
 
         $currentDateTime = Carbon::now();

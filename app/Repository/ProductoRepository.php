@@ -33,6 +33,9 @@ class ProductoRepository
         if(isset($request['idCategoria'])){
             $query->where('categoria_id','=',$request['idCategoria']);
         }
+        if(isset($request['registroSanitarioId'])){
+            $query->where('registro_sanitario_id','=',$request['registroSanitarioId']);
+        }
         if(isset($request['oferta'])){
             $query->where('oferta','=',intval($request['oferta']));
         }
@@ -58,9 +61,15 @@ class ProductoRepository
         return $query->paginate($request['limit']??10);
     }
 
-    public function getCantidadesTipo(){
-        return Producto::selectRaw('tipo, COUNT(*) as count')
-            ->groupBy('tipo')
-            ->get();
+    public function getCantidadesTipo($request=[]){
+        $query= Producto::selectRaw('tipo, COUNT(*) as count')
+            ->groupBy('tipo');
+        if(isset($request['registroSanitario'])){
+            $tipoRegistroSanitario = $request['registroSanitario'];
+            if($tipoRegistroSanitario === 'SIN REGISTRO'){
+                $query->whereNull('registro_sanitario_id');
+            }
+        }
+         return $query->get();
     }
 }

@@ -45,7 +45,14 @@ class RolPermisoSeeders extends Seeder
             ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c58'],
             ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c59'],
             ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c60'],
-            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c61'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c62'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c63'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c64'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c65'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c66'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c67'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c68'],
+            ['rol_id'=>$rolSuperAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c69'],
 
             // ADMINISTRADOR
             ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c40'],
@@ -65,6 +72,14 @@ class RolPermisoSeeders extends Seeder
             ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c59'],
             ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c60'],
             ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c61'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c62'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c63'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c64'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c65'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c66'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c67'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c68'],
+            ['rol_id'=>$rolAdmin,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c69'],
 
             // ALMACEN
             ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c53'],
@@ -76,6 +91,14 @@ class RolPermisoSeeders extends Seeder
             ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c59'],
             ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c60'],
             ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c61'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c62'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c63'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c64'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c65'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c66'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c67'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c68'],
+            ['rol_id'=>$rolAlmacen,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c69'],
 
             // CLIENTE
             ['rol_id'=>$rolCliente,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c48'],
@@ -83,6 +106,7 @@ class RolPermisoSeeders extends Seeder
             ['rol_id'=>$rolCliente,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c56'],
             ['rol_id'=>$rolCliente,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c57'],
             ['rol_id'=>$rolCliente,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c59'],
+            ['rol_id'=>$rolCliente,'permiso_id'=>'ff077dcb-a058-45c1-8d17-903c4d701c63'],
         ];
 
         $currentDateTime = Carbon::now();

@@ -116,9 +116,19 @@ class ProductoController extends Controller
         }
     }
 
-    public function  getCantidadesTipo (){
+    public function updateRegistroSanitario(Producto $producto, Request $request){
         try {
-            $cantidades = $this->productoRepository ->getCantidadesTipo();
+            $registroSanitarioId = $request->request->get('registroSanitarioId',null);
+            $producto->update(['registro_sanitario_id'=>$registroSanitarioId]);
+            return ApiResponse::success(new ProductoResource($producto));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function  getCantidadesTipo (Request $request){
+        try {
+            $cantidades = $this->productoRepository ->getCantidadesTipo($request->query->all());
             $respuesta = $cantidades->pluck('count', 'tipo')->all();
             $respuesta['TOTAL']= array_sum($respuesta);
             return ApiResponse::success($respuesta);

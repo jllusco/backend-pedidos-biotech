@@ -122,6 +122,7 @@ Route::group([
         Route::get('registros-sanitarios/{registroSanitario}','show');
         Route::put('registros-sanitarios/{registroSanitario}','update');
         Route::patch('registros-sanitarios/{registroSanitario}/documento','updateDocumento');
+        Route::get('registros-sanitarios/{registroSanitario}/productos','productos');
     });
 
     Route::controller(ProductoController::class)->group(function (){
@@ -132,6 +133,7 @@ Route::group([
         Route::put('productos/{producto}','update');
         Route::patch('productos/{producto}/imagen','updateImagen');
         Route::patch('productos/{producto}/estado','updateEstado');
+        Route::patch('productos/{producto}/registro-sanitario','updateRegistroSanitario');
         Route::patch('productos/{producto}/especificacion-tecnica','updateEspecificacionTecnica');
     });
 

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
+use App\Http\Resources\Biotech\ProductoCollection;
 use App\Http\Resources\Biotech\RegistroSanitarioCollection;
 use App\Http\Resources\RegistroSanitarioResource;
 use App\Models\RegistroSanitario;
 use App\Http\Requests\StoreRegistroSanitarioRequest;
 use App\Http\Requests\UpdateRegistroSanitarioRequest;
+use App\Repository\ProductoRepository;
 use App\Repository\RegistroSanitarioRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,9 +17,11 @@ use Illuminate\Support\Str;
 class RegistroSanitarioController extends Controller
 {
     private $registroSanitarioRepository;
+    private $productosRepository;
 
-    public function __construct(RegistroSanitarioRepository $registroSanitarioRepository){
+    public function __construct(RegistroSanitarioRepository $registroSanitarioRepository, ProductoRepository $productoRepository){
         $this->registroSanitarioRepository = $registroSanitarioRepository;
+        $this->productosRepository = $productoRepository;
     }
 
     public function index(Request $request){
@@ -69,6 +73,15 @@ class RegistroSanitarioController extends Controller
             $datos['ruta_documento']= "$folder/$fileName";
             $registroSanitario->update($datos);
             return ApiResponse::success(new RegistroSanitarioResource($registroSanitario));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function productos (RegistroSanitario $registroSanitario){
+        try {
+            $productos = $this->productosRepository->findAll(['registroSanitarioId'=>$registroSanitario->id]);
+            return ApiResponse::success(new ProductoCollection($productos));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }

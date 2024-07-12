@@ -29,7 +29,7 @@ class ProductoResource extends JsonResource
             'rutaEspecificacionTecnica'=>$this->ruta_especificacion_tecnica,
             'presentacionId'=>$this->presentacion_id,
             'presentacion'=> new ParametroResource($this->whenLoaded('presentacion')),
-            'registroSanitatioId'=>$this->presenteacion_id,
+            'registroSanitarioId'=>$this->presenteacion_id,
             'registroSanitario'=> new RegistroSanitarioResource($this->whenLoaded('registroSanitario')),
             'categoriaId'=>$this->categoria_id,
             'categoria'=> new CategoriaResource($this->whenLoaded('categoria')),

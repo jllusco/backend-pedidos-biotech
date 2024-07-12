@@ -72,6 +72,18 @@ class RolMenuSeeders extends Seeder
                 'menu_id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolSuperAdmin,
+                'menu_id'=>'89fc6a51-8d01-4c72-8fc4-09d57b9be5da',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolSuperAdmin,
+                'menu_id'=>'a8cbd7c3-5542-4935-b64c-3be3fa092bac',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
             
 
             // ADMINISTRADOR
@@ -105,6 +117,18 @@ class RolMenuSeeders extends Seeder
                 'menu_id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolAdmin,
+                'menu_id'=>'89fc6a51-8d01-4c72-8fc4-09d57b9be5da',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolAdmin,
+                'menu_id'=>'a8cbd7c3-5542-4935-b64c-3be3fa092bac',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
 
             // ALMACEN
             [
@@ -129,6 +153,18 @@ class RolMenuSeeders extends Seeder
                 'id'=>(string)Str::uuid(),
                 'rol_id'=>$rolAlmacen,
                 'menu_id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolAlmacen,
+                'menu_id'=>'89fc6a51-8d01-4c72-8fc4-09d57b9be5da',
+                'created_by'=>config('constants.ID_USUARIO_ADMIN')
+            ],
+            [
+                'id'=>(string)Str::uuid(),
+                'rol_id'=>$rolAlmacen,
+                'menu_id'=>'a8cbd7c3-5542-4935-b64c-3be3fa092bac',
                 'created_by'=>config('constants.ID_USUARIO_ADMIN')
             ],
 

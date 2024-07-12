@@ -48,35 +48,49 @@ class MenuSeeder extends Seeder
                 'nombre'=>'Parametros',
                 'ruta'=>'parametros',
                 'icono'=>'settings',
-                'orden'=>8
+                'orden'=>5
             ],
             [
                 'id'=>'9ee88462-5baf-4c9e-83dc-2b19df5cb034',
                 'nombre'=>'Productos',
                 'ruta'=>'productos',
                 'icono'=>'inventory',
-                'orden'=>9
+                'orden'=>6
+            ],
+            [
+                'id'=>'89fc6a51-8d01-4c72-8fc4-09d57b9be5da',
+                'nombre'=>'Lista precios',
+                'ruta'=>'lista-precios',
+                'icono'=>'receipt_long',
+                'orden'=>7
             ],
             [
                 'id'=>'77e95c5b-c6c8-4232-a1f5-cd9e47ee6d38',
                 'nombre'=>'Pedidos',
                 'ruta'=>'pedidos',
                 'icono'=>'shopping_cart',
-                'orden'=>10
+                'orden'=>8
             ],
             [
                 'id'=>'81610a1a-8c04-4d52-9fda-a605eac09bf7',
                 'nombre'=>'PIAL',
                 'ruta'=>'pial',
                 'icono'=>'content_paste',
-                'orden'=>11
+                'orden'=>9
+            ],
+            [
+                'id'=>'a8cbd7c3-5542-4935-b64c-3be3fa092bac',
+                'nombre'=>'Registros sanitario',
+                'ruta'=>'registros-sanitarios',
+                'icono'=>'verified',
+                'orden'=>10
             ],
             [
                 'id'=>'b2dd187d-902a-4861-bb81-0352491445f7',
                 'nombre'=>'Ayuda',
                 'ruta'=>'ayuda',
                 'icono'=>'support_agent',
-                'orden'=>12
+                'orden'=>10
             ]
         ];
 

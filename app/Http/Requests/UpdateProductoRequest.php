@@ -38,7 +38,7 @@ class UpdateProductoRequest extends FormRequest
         return [
             'codigo' => ['required','string','min:3','max:50'],
             'nombre' =>  ['required','string','max:100'],
-            'descripcion' => ['required','string','min:10'],
+            'descripcion' => ['required','string','min:5'],
             'imagen'=>['sometimes','required','file','mimes:jpeg,png','max:6144'],
             'tipo'=>['required'],
             'proveedorId'=>['required'],
