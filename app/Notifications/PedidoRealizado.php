@@ -46,11 +46,13 @@ class PedidoRealizado extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Pedido Realizado')
+            ->subject('Pedido realizado')
+            ->greeting('¡Hola!')
             ->line('Se ha realizado un nuevo pedido.')
             ->line($this->message)
             ->action('Ver Pedido', url('/'))
-            ->line('Gracias por usar nuestra aplicación!');
+            ->line('Gracias por usar nuestra aplicación!')
+            ->salutation('Saludos, El equipo de Biotech');
     }
 
     /**

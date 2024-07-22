@@ -22,6 +22,7 @@ class Producto extends BaseModel
         'ruta_imagen',
         'precio_unitario',
         'precio_exwork',
+        'cantidad_actual',
         'estado',
         'unidad',
         'temperatura',
