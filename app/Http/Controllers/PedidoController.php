@@ -7,6 +7,7 @@ use App\Http\Requests\StorePedidoRequest;
 use App\Http\Resources\Biotech\DetallePedidoCollection;
 use App\Http\Resources\Biotech\PedidoCollection;
 use App\Http\Resources\Biotech\PedidoResource;
+use App\Jobs\SendNotificationPedidoRealizadoJob;
 use App\Models\DetallePedido;
 use App\Models\HistorialEstadoPedido;
 use App\Models\Pedido;
@@ -57,10 +58,13 @@ class PedidoController extends Controller
             if(count($productos)===0){
                 return ApiResponse::error('El pedido debe tener al menos un producto');
             }
+            $usuario = $request->user();
             $montoTotal = $this->getMontoTotal($productos);
             $datos['monto_total'] = $montoTotal;
             $datos['contacto']= json_encode($datos['contacto']);
-            $datos['lista_precio_id']=$request->user()->lista_precio_id;
+            $datos['lista_precio_id']=$usuario->lista_precio_id;
+            $datos['usuario_solicitante_id']=$usuario->id;
+            $datos['nombre_usuario_solicitante']= trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
             $pedido = Pedido::create($datos);
             foreach ($productos as $producto) {
                 DetallePedido::create([
@@ -107,69 +111,71 @@ class PedidoController extends Controller
         return $mes.$numero;
     }
 
-    public function enviar(Pedido $pedido,Request $request){
+//    public function enviar(Pedido $pedido,Request $request){
+//        try {
+//            if($pedido->estado !== 'CREADO'){
+//                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
+//            }
+//            $usuario = $request->user();
+//            $datos=[
+//                'codigo'=>$this->generarCodigo(),
+//                'fecha'=>Carbon::now(),
+//                'usuario_solicitante_id'=> $usuario->id,
+//                'nombre_usuario_solicitante'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+//                'estado'=>'SOLICITADO',
+//            ];
+//            $pedido->update($datos);
+//            HistorialEstadoPedido::create([
+//                'pedido_id'=>$pedido->id,
+//                'estado'=>'SOLICITADO',
+//                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+//                'rol_usuario'=>$usuario->rol->nombre
+//            ]);
+//            return ApiResponse::success(new PedidoResource($pedido));
+//        } catch (\Exception $e) {
+//            return ApiResponse::exception($e);
+//        }
+//    }
+
+//    public function recepcionar(Pedido $pedido,Request $request){
+//        try {
+//            if($pedido->estado !== 'SOLICITADO'){
+//                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
+//            }
+//            $usuario = $request->user();
+//            $datos=[
+//                'usuario_atencion_id'=> $usuario->id,
+//                'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+//                'estado'=>'EN CURSO',
+//            ];
+//            $pedido->update($datos);
+//            HistorialEstadoPedido::create([
+//                'pedido_id'=>$pedido->id,
+//                'estado'=>'EN CURSO',
+//                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+//                'rol_usuario'=>$usuario->rol->nombre
+//            ]);
+//            return ApiResponse::success(new PedidoResource($pedido));
+//        } catch (\Exception $e) {
+//            return ApiResponse::exception($e);
+//        }
+//    }
+
+    public function confirmar(Pedido $pedido,Request $request){
         try {
             if($pedido->estado !== 'CREADO'){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
             $usuario = $request->user();
-            $datos=[
-                'codigo'=>$this->generarCodigo(),
-                'fecha'=>Carbon::now(),
-                'usuario_solicitante_id'=> $usuario->id,
-                'nombre_usuario_solicitante'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-                'estado'=>'SOLICITADO',
-            ];
-            $pedido->update($datos);
-            HistorialEstadoPedido::create([
-                'pedido_id'=>$pedido->id,
-                'estado'=>'SOLICITADO',
-                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-                'rol_usuario'=>$usuario->rol->nombre
-            ]);
-            return ApiResponse::success(new PedidoResource($pedido));
-        } catch (\Exception $e) {
-            return ApiResponse::exception($e);
-        }
-    }
-
-    public function recepcionar(Pedido $pedido,Request $request){
-        try {
-            if($pedido->estado !== 'SOLICITADO'){
-                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
-            }
-            $usuario = $request->user();
-            $datos=[
-                'usuario_atencion_id'=> $usuario->id,
-                'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-                'estado'=>'EN CURSO',
-            ];
-            $pedido->update($datos);
-            HistorialEstadoPedido::create([
-                'pedido_id'=>$pedido->id,
-                'estado'=>'EN CURSO',
-                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-                'rol_usuario'=>$usuario->rol->nombre
-            ]);
-            return ApiResponse::success(new PedidoResource($pedido));
-        } catch (\Exception $e) {
-            return ApiResponse::exception($e);
-        }
-    }
-
-    public function confirmar(Pedido $pedido,Request $request){
-        try {
-            if($pedido->estado !== 'PENDIENTE'){
-                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
-            }
-            $usuario = $request->user();
-            $nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
+            //$nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
             if($pedido->usuario_solicitante_id !== $usuario->id){
-                return ApiResponse::error('El pedido solo puede ser confirmado por el usuario '.$nombreUsuario );
+                return ApiResponse::error('El pedido solo puede ser confirmado por el usuario '.$pedido->nombre_usuario_solicitante );
             }
             $datos=[
                 //'usuario_atencion_id'=> $usuario->id,
                 //'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+                'codigo'=>$this->generarCodigo(),
+                'fecha'=>Carbon::now(),
                 'estado'=>'CONFIRMADO',
             ];
             $pedido->update($datos);
@@ -179,6 +185,9 @@ class PedidoController extends Controller
                 'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'rol_usuario'=>$usuario->rol->nombre
             ]);
+
+            SendNotificationPedidoRealizadoJob::dispatch($pedido->estado,$usuario->id,$pedido->id);
+
             return ApiResponse::success(new PedidoResource($pedido));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
@@ -198,6 +207,7 @@ class PedidoController extends Controller
             $datos=[
                 //'usuario_atencion_id'=> $usuario->id,
                 //'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+                'codigo'=>$this->generarCodigo(),
                 'estado'=>'CANCELADO',
             ];
             $pedido->update($datos);
@@ -213,38 +223,38 @@ class PedidoController extends Controller
         }
     }
 
-    public function pendiente(Pedido $pedido,Request $request){
-        try {
-            if($pedido->estado !== 'EN CURSO'){
-                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
-            }
-            $usuario = $request->user();
-            $nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
-            if($pedido->usuario_atencion_id !== $usuario->id){
-                return ApiResponse::error('El pedido solo puede ser enviado al cliente por el usuario '.$nombreUsuario );
-            }
-            $cantidadPedidosSinMonto = $this->detallePedidoRepository->cantidadProductosSinMonto($pedido->id);
-            if($cantidadPedidosSinMonto>0){
-                return ApiResponse::error('Existen '.$cantidadPedidosSinMonto.' productos sin monto' );
-            }
-            $datos=[
-                'usuario_atencion_id'=> $usuario->id,
-                'nombre_usuario_atencion'=>$nombreUsuario,
-                'monto_total'=> $this->detallePedidoRepository->montoTotal($pedido->id),
-                'estado'=>'PENDIENTE',
-            ];
-            $pedido->update($datos);
-            HistorialEstadoPedido::create([
-                'pedido_id'=>$pedido->id,
-                'estado'=>'PENDIENTE',
-                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-                'rol_usuario'=>$usuario->rol->nombre
-            ]);
-            return ApiResponse::success(new PedidoResource($pedido));
-        } catch (\Exception $e) {
-            return ApiResponse::exception($e);
-        }
-    }
+//    public function pendiente(Pedido $pedido,Request $request){
+//        try {
+//            if($pedido->estado !== 'EN CURSO'){
+//                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
+//            }
+//            $usuario = $request->user();
+//            $nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
+//            if($pedido->usuario_atencion_id !== $usuario->id){
+//                return ApiResponse::error('El pedido solo puede ser enviado al cliente por el usuario '.$nombreUsuario );
+//            }
+//            $cantidadPedidosSinMonto = $this->detallePedidoRepository->cantidadProductosSinMonto($pedido->id);
+//            if($cantidadPedidosSinMonto>0){
+//                return ApiResponse::error('Existen '.$cantidadPedidosSinMonto.' productos sin monto' );
+//            }
+//            $datos=[
+//                'usuario_atencion_id'=> $usuario->id,
+//                'nombre_usuario_atencion'=>$nombreUsuario,
+//                'monto_total'=> $this->detallePedidoRepository->montoTotal($pedido->id),
+//                'estado'=>'PENDIENTE',
+//            ];
+//            $pedido->update($datos);
+//            HistorialEstadoPedido::create([
+//                'pedido_id'=>$pedido->id,
+//                'estado'=>'PENDIENTE',
+//                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+//                'rol_usuario'=>$usuario->rol->nombre
+//            ]);
+//            return ApiResponse::success(new PedidoResource($pedido));
+//        } catch (\Exception $e) {
+//            return ApiResponse::exception($e);
+//        }
+//    }
 
     public function entregado(Pedido $pedido,Request $request){
         try {

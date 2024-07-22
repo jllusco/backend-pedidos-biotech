@@ -111,4 +111,26 @@ class UsuarioController extends Controller
         }
     }
 
+    public function getNotificaciones(){
+        try {
+            $notifications = auth()->user()->notifications;
+            auth()->user()->unreadNotifications->markAsRead();
+            return ApiResponse::success($notifications);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+
+    public function getCantidadNotificaciones(){
+        try {
+            $cantidad = auth()->user()->unreadNotifications->count();
+            return ApiResponse::success($cantidad);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+
+
 }

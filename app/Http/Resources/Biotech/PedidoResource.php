@@ -7,6 +7,7 @@
  */
 namespace App\Http\Resources\Biotech;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +20,7 @@ class PedidoResource extends JsonResource
             'codigo'=>$this->codigo,
             'usuarioSolicitanteId'=>$this->usuario_solicitante_id,
             'nombreUsuarioSolicitante'=>$this->nombre_usuario_solicitante,
-            'fecha'=>$this->fecha,
+            'fecha'=>$this->fecha?Carbon::parse($this->fecha)->format('d/m/Y H:i:s'):null,
             'montoTotal'=>$this->monto_total,
             'fechaEntrega'=>$this->fecha_enterga,
             'usuarioAtencionId'=>$this->usuario_atencion_id,

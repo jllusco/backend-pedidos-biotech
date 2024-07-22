@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class DetallePedidoRepository
 {
     public function getByPedido($idPedido){
-        $query = DetallePedido::with('producto');
+        $query = DetallePedido::with('producto.registroSanitario');
         $query->where('pedido_id','=',$idPedido);
         $query->orderBy('created_at','DESC');
         $resultados = $query->get();

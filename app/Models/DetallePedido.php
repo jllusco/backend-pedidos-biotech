@@ -20,8 +20,11 @@ class DetallePedido extends BaseModel
         'producto_id',
         'tipo_producto',
         'cantidad',
+        'cantidad_entrega_inmediata',
+        'estado',
         'precio',
-        'monto'
+        'monto',
+        'historial_stock_producto_id'
     ];
 
     public function producto(){
@@ -30,5 +33,9 @@ class DetallePedido extends BaseModel
 
     public function pedido(){
         return $this->belongsTo(Pedido::class);
+    }
+
+    public function historialStockProducto(){
+        return $this->belongsTo(HistorialStockProducto::class,'historial_stock_producto_id');
     }
 }

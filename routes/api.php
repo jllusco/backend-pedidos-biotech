@@ -67,6 +67,8 @@ Route::group([
 
     Route::controller(UsuarioController::class)->group(function (){
         Route::get('usuarios','index');
+        Route::get('usuarios/notificaciones','getNotificaciones');
+        Route::get('usuarios/notificaciones/cantidad','getCantidadNotificaciones');
         Route::get('usuarios/{user}','show');
         Route::put('usuarios/{user}','update');
         Route::post('usuarios','store');
@@ -156,12 +158,12 @@ Route::group([
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos','index');
         Route::post('pedidos','store');
-        Route::post('pedidos/prueba','prueba');
+        // Route::post('pedidos/prueba','prueba');
         Route::post('pedidos/{pedido}/copia','copiarPedido');
         Route::get('pedidos/{pedido}','show');
-        Route::put('pedidos/{pedido}/enviar','enviar');
-        Route::put('pedidos/{pedido}/atencion','recepcionar');
-        Route::put('pedidos/{pedido}/pendiente','pendiente');
+        //Route::put('pedidos/{pedido}/enviar','enviar');
+        //Route::put('pedidos/{pedido}/atencion','recepcionar');
+        //Route::put('pedidos/{pedido}/pendiente','pendiente');
         //Route::put('pedidos/{pedido}/entregado','entregado');
         Route::put('pedidos/{pedido}/confirmar','confirmar');
         Route::put('pedidos/{pedido}/cancelar','cancelar');

@@ -80,12 +80,20 @@ class User extends Authenticatable
         return 'contrasena';
     }*/
 
+    public function getNombreCompletoAttribute()
+    {
+        return trim("$this->nombres $this->primer_apellido $this->segundo_apellido");
+    }
 
-   public function rol(){
+    public function rol(){
        return $this->belongsTo(Rol::class);
-   }
+    }
 
     public function listaPrecio(){
         return $this->belongsTo(ListaPrecio::class);
+    }
+
+    public function routeNotificationForMail($notification){
+        return $this->correo_electronico;
     }
 }
