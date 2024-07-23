@@ -32,7 +32,8 @@ class Pedido extends BaseModel
         'institucion',
         'asunto',
         'comentario',
-        'contacto'
+        'contacto',
+        'lista_precio_id'
     ];
 
     public function solicitante(){

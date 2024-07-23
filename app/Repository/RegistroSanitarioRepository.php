@@ -11,12 +11,12 @@ namespace App\Repository;
 
 use App\Models\DetallePedido;
 use App\Models\RegistroSanitario;
+use Carbon\Carbon;
 
 class RegistroSanitarioRepository
 {
     public function findAll($request)
     {
-
         $query = RegistroSanitario::query();
 
         if (isset($request['numero'])) {
@@ -36,5 +36,12 @@ class RegistroSanitarioRepository
 
         $query->orderBy('created_at', 'DESC');
         return $query->paginate($request['limit'] ?? 1000);
+    }
+
+    public function findCaducado($days = 0){
+        $fechaActual = Carbon::now();
+        $fechaActual->addDays($days);
+        $query = RegistroSanitario::where('fecha_vencimiento','<=',$fechaActual);
+        return $query->get();
     }
 }

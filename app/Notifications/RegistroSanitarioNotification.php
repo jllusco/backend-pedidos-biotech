@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PedidoRealizado extends Notification
+class RegistroSanitarioNotification extends Notification
 {
     use Queueable;
 
@@ -34,9 +34,9 @@ class PedidoRealizado extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'titulo'=>'PEDIDO',
+            'titulo'=>'REGISTRO SANITARIO',
             'message' => $this->message,
-            'ruta'=>'/app/pedidos'
+            'ruta'=>'/app/registros-sanitarios'
         ];
     }
 
@@ -46,11 +46,10 @@ class PedidoRealizado extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Pedido realizado')
-            ->greeting('¡Hola!')
-            ->line('Se ha realizado un nuevo pedido.')
+            ->subject('Registro sanitario')
+            ->greeting('Alerta!')
             ->line($this->message)
-            ->action('Ver Pedido', url('/'))
+            ->action('Ver registro', env('APP_FRONTEND_URL').'/app/registros-sanitarios' )
             ->line('Gracias por usar nuestra aplicación!')
             ->salutation('Saludos, El equipo de Biotech');
     }
@@ -63,9 +62,9 @@ class PedidoRealizado extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'titulo'=>'PEDIDO',
+            'titulo'=>'REGISTRO SANITARIO',
             'message' => $this->message,
-            'ruta'=>'/app/pedidos'
+            'ruta'=>'/app/registros-sanitarios'
         ];
     }
 }

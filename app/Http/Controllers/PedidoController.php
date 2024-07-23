@@ -10,10 +10,12 @@ use App\Http\Resources\Biotech\PedidoResource;
 use App\Jobs\SendNotificationPedidoRealizadoJob;
 use App\Models\DetallePedido;
 use App\Models\HistorialEstadoPedido;
+use App\Models\HistorialStockProducto;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Repository\DetallePedidoRepository;
 use App\Repository\HistorialEstadoPedidoRepository;
+use App\Repository\ListaPrecioProductoRepository;
 use App\Repository\PedidoRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -26,15 +28,18 @@ class PedidoController extends Controller
     private $pedidoRepository;
     private $detallePedidoRepository;
     private $historialEstadoPedidoRepository;
+    private $listaPrecioProductoRepository;
 
     public function __construct(PedidoRepository $pedidoRepository,
                                 DetallePedidoRepository $detallePedidoRepository,
-                                HistorialEstadoPedidoRepository $historialEstadoPedidoRepository
+                                HistorialEstadoPedidoRepository $historialEstadoPedidoRepository,
+                                ListaPrecioProductoRepository $listaPrecioProductoRepository
     )
     {
         $this->pedidoRepository = $pedidoRepository;
         $this->detallePedidoRepository = $detallePedidoRepository;
         $this->historialEstadoPedidoRepository = $historialEstadoPedidoRepository;
+        $this->listaPrecioProductoRepository = $listaPrecioProductoRepository;
     }
 
     public function index(Request $request){
@@ -61,10 +66,10 @@ class PedidoController extends Controller
             $usuario = $request->user();
             $montoTotal = $this->getMontoTotal($productos);
             $datos['monto_total'] = $montoTotal;
-            $datos['contacto']= json_encode($datos['contacto']);
-            $datos['lista_precio_id']=$usuario->lista_precio_id;
-            $datos['usuario_solicitante_id']=$usuario->id;
-            $datos['nombre_usuario_solicitante']= trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
+            $datos['contacto'] = json_encode($datos['contacto']);
+            $datos['lista_precio_id'] = $usuario->lista_precio_id;
+            $datos['usuario_solicitante_id'] = $usuario->id;
+            $datos['nombre_usuario_solicitante'] = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
             $pedido = Pedido::create($datos);
             foreach ($productos as $producto) {
                 DetallePedido::create([
@@ -179,6 +184,28 @@ class PedidoController extends Controller
                 'estado'=>'CONFIRMADO',
             ];
             $pedido->update($datos);
+            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            foreach ($productos as $producto) {
+                $productoOriginal = $producto->producto;
+                if($productoOriginal->cantidad_actual>0){
+                    $saldoStock = $producto->cantidad - $productoOriginal->cantidad_actual;
+                    $nuevoStock = 0;
+                    $cantidadEntrega = $productoOriginal->cantidad_actual;
+                    if($saldoStock<0){
+                        $nuevoStock = $saldoStock* -1;
+                        $cantidadEntrega = $productoOriginal->cantidad_actual - $nuevoStock;
+                    }
+                    HistorialStockProducto::create([
+                        'tipo'=>'EGRESO',
+                        'producto_id'=>$productoOriginal->id,
+                        'descripcion'=>"Entrega inmediata para el pedido confirmado $pedido->codigo",
+                        'cantidad'=>$cantidadEntrega,
+                        'detalle_pedido_id'=>$producto->id
+                    ]);
+                    $productoOriginal->update(['cantidad_actual'=>$nuevoStock]);
+                    $producto->update(['cantidad_entrega_inmediata'=>$cantidadEntrega]);
+                }
+            }
             HistorialEstadoPedido::create([
                 'pedido_id'=>$pedido->id,
                 'estado'=>'CONFIRMADO',
@@ -425,9 +452,18 @@ class PedidoController extends Controller
 
     public function copiarPedido (Pedido $pedido){
         try {
-            dd($pedido);
-            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
-            dd($productos);
+            $usuario = auth()->user();
+            $data = [
+                'contacto' => $pedido->contacto,
+                'lista_precio_id' => $pedido->lista_precio_id,
+                'usuario_solicitante_id' => $usuario->id,
+                'nombre_usuario_solicitante' => trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido)
+            ];
+            $cantidadProductosPedido = $this->detallePedidoRepository->cantidadProductosPedido($pedido->id);
+            dump($cantidadProductosPedido);
+            $idProductos = $this->detallePedidoRepository->getByPedidoIdProducto($pedido->id);
+            $productosLista = $this->listaPrecioProductoRepository->getProductosVigentes($pedido->lista_precio_id,$idProductos);
+            dd($productosLista);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }

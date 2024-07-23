@@ -22,7 +22,15 @@ class ListaPrecioProductoRepository
         $resultados = $resultados->sortBy(function($item) {
             return $item->producto->nombre;
         });
-
         return $resultados->values()->all();
+    }
+
+    public function getProductosVigentes($idListaPrecio,$idProductos){
+        $query = ListaPrecioProducto::select('producto_id','precio_unitario')
+            ->where('lista_precio_id','=',$idListaPrecio)
+            ->whereIn('producto_id',$idProductos)
+            ->whereNull('deleted_at');
+        return $query->get()->pluck('precio_unitario', 'producto_id')
+            ->toArray();
     }
 }

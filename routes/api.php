@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\DetallePedidoController;
+use App\Http\Controllers\HistorialStockProductoController;
 use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\ListaPrecioProductoController;
 use App\Http\Controllers\MenuController;
@@ -137,6 +138,11 @@ Route::group([
         Route::patch('productos/{producto}/estado','updateEstado');
         Route::patch('productos/{producto}/registro-sanitario','updateRegistroSanitario');
         Route::patch('productos/{producto}/especificacion-tecnica','updateEspecificacionTecnica');
+    });
+
+    Route::controller(HistorialStockProductoController::class)->group(function(){
+        Route::get('historial-cantidad','index');
+        Route::post('historial-cantidad','store');
     });
 
     Route::controller(ListaPrecioController::class)->group(function (){

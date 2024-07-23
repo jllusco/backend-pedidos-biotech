@@ -32,4 +32,10 @@ class UserRepositoy
         }
         return $query->paginate($request['limit']??10);
     }
+
+    public function getUsuariosBiotech(){
+        return User::whereIn('rol_id',[config('constants.ROL_ADMINISTRADOR'), config('constants.ROL_ALMACEN')])
+            ->where('estado','=','ACTIVO')
+            ->get();
+    }
 }

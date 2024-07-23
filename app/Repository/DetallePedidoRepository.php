@@ -27,12 +27,26 @@ class DetallePedidoRepository
         return $resultados->values()->all();
     }
 
+    public function getByPedidoIdProducto($idPedido){
+        $query = DetallePedido::select('producto_id');
+        $query->where('pedido_id','=',$idPedido);
+        $query->orderBy('created_at','DESC');
+        return $query->get()->pluck('producto_id')->toArray();
+    }
+
     public function getByPedidosPial($idPedidos){
         $query = DetallePedido::query();
         $query->selectRaw('producto_id, producto.precio_exwork, producto.tipo, SUM(cantidad) as cantidad')
             ->join('producto', 'producto.id', '=', 'producto_id')
             ->groupBy('producto_id');
         return $query->get();
+    }
+
+    public function cantidadProductosPedido($idPedido){
+        $query = DetallePedido::where('pedido_id','=',$idPedido)
+            ->whereNull('deleted_at')
+            ->count();
+        return $query;
     }
 
     public function cantidadProductosSinMonto($idPedido){

@@ -19,7 +19,8 @@ class HistorialStockProducto extends BaseModel
       'tipo',
       'cantidad',
       'descripcion',
-      'detalle_pedido_id'
+      'detalle_pedido_id',
+      'created_at'
     ];
 
     public function detallePedido()

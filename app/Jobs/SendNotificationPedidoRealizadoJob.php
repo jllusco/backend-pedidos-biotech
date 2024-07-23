@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use App\Notifications\PedidoRealizado;
+use App\Notifications\PedidoRealizadoNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -56,10 +56,10 @@ class SendNotificationPedidoRealizadoJob implements ShouldQueue
 
             /** @var User $user */
             foreach ($usuarios as $user) {
-                $user->notify(new PedidoRealizado($mensajes[$this->tipo]));
+                $user->notify(new PedidoRealizadoNotification($mensajes[$this->tipo]));
             }
 
-            $usuarioCreador->notify(new PedidoRealizado($mensajesCreador[$this->tipo]));
+            $usuarioCreador->notify(new PedidoRealizadoNotification($mensajesCreador[$this->tipo]));
         }catch(\Exception $e){
             Log::info('Error: ', $e);
         }

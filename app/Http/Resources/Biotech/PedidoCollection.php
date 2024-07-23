@@ -16,7 +16,6 @@ class PedidoCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-
             'rows' => $this->collection->map(function ($pedido) {
                 return [
                     'id'=>$pedido->id,

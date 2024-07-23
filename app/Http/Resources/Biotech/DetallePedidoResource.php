@@ -22,6 +22,7 @@ class DetallePedidoResource extends JsonResource
             'productoId'=>$this->producto_id,
             'tipoProducto'=>$this->tipo_producto,
             'cantidad'=>$this->cantidad,
+            'cantidadEntregaInmediata'=>$this->cantidad_entrega_inmediata,
             'precio'=>$this->precio,
             'monto'=>$this->monto,
             'producto'=> new ProductoResource($this->whenLoaded('producto')),
