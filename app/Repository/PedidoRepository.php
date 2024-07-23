@@ -37,6 +37,12 @@ class PedidoRepository
         return $query->paginate($request['limit']??10);
     }
 
+    public function getPedidosPendientes(){
+        $query = Pedido::query()
+            ->where('estado','=','CREADO');
+        return $query->get();
+    }
+
     public function getCantidad($anio,$mes){
         return Pedido::query()->whereYear('fecha',$anio)->count();
     }

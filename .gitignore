@@ -4,6 +4,8 @@
 /public/hot
 /public/storage
 /public/image/productos/*
+/public/documentos/productos/*
+/public/documentos/registro-sanitario/*
 
 /storage/*.key
 /vendor

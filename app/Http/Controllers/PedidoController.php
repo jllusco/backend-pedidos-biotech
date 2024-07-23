@@ -8,6 +8,7 @@ use App\Http\Resources\Biotech\DetallePedidoCollection;
 use App\Http\Resources\Biotech\PedidoCollection;
 use App\Http\Resources\Biotech\PedidoResource;
 use App\Jobs\SendNotificationPedidoRealizadoJob;
+use App\Models\Cronograma;
 use App\Models\DetallePedido;
 use App\Models\HistorialEstadoPedido;
 use App\Models\HistorialStockProducto;
@@ -82,7 +83,6 @@ class PedidoController extends Controller
                     'created_by'=>$request->user()->id
                 ]);
             }
-            $usuario = $request->user();
             HistorialEstadoPedido::create([
                 'pedido_id'=>$pedido->id,
                 'estado'=>'CREADO',
@@ -116,69 +116,26 @@ class PedidoController extends Controller
         return $mes.$numero;
     }
 
-//    public function enviar(Pedido $pedido,Request $request){
-//        try {
-//            if($pedido->estado !== 'CREADO'){
-//                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
-//            }
-//            $usuario = $request->user();
-//            $datos=[
-//                'codigo'=>$this->generarCodigo(),
-//                'fecha'=>Carbon::now(),
-//                'usuario_solicitante_id'=> $usuario->id,
-//                'nombre_usuario_solicitante'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-//                'estado'=>'SOLICITADO',
-//            ];
-//            $pedido->update($datos);
-//            HistorialEstadoPedido::create([
-//                'pedido_id'=>$pedido->id,
-//                'estado'=>'SOLICITADO',
-//                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-//                'rol_usuario'=>$usuario->rol->nombre
-//            ]);
-//            return ApiResponse::success(new PedidoResource($pedido));
-//        } catch (\Exception $e) {
-//            return ApiResponse::exception($e);
-//        }
-//    }
-
-//    public function recepcionar(Pedido $pedido,Request $request){
-//        try {
-//            if($pedido->estado !== 'SOLICITADO'){
-//                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
-//            }
-//            $usuario = $request->user();
-//            $datos=[
-//                'usuario_atencion_id'=> $usuario->id,
-//                'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-//                'estado'=>'EN CURSO',
-//            ];
-//            $pedido->update($datos);
-//            HistorialEstadoPedido::create([
-//                'pedido_id'=>$pedido->id,
-//                'estado'=>'EN CURSO',
-//                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-//                'rol_usuario'=>$usuario->rol->nombre
-//            ]);
-//            return ApiResponse::success(new PedidoResource($pedido));
-//        } catch (\Exception $e) {
-//            return ApiResponse::exception($e);
-//        }
-//    }
-
     public function confirmar(Pedido $pedido,Request $request){
         try {
             if($pedido->estado !== 'CREADO'){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
+            $fechaActual = (Carbon::now())->setTime(0,0,0,0);
+            $cronogramaActual = Cronograma::query()->where('mes','=',intval($fechaActual->format('m')))->where('estado','=','ACTIVO')->first();
+            if(!$cronogramaActual){
+                return ApiResponse::error('No se tiene habilitado una fecha para el mes en curso');
+            }
+            $fechaIncio = Carbon::create($fechaActual->format('Y'),$cronogramaActual->mes,$cronogramaActual->inicio);
+            $fechaFin = Carbon::create($fechaActual->format('Y'),$cronogramaActual->mes,$cronogramaActual->fin);
+            if($fechaIncio>$fechaActual or $fechaFin<$fechaActual) {
+                return ApiResponse::error('No se puede realizar el pedido, fecha actual fuera del rango permitido');
+            }
             $usuario = $request->user();
-            //$nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
             if($pedido->usuario_solicitante_id !== $usuario->id){
                 return ApiResponse::error('El pedido solo puede ser confirmado por el usuario '.$pedido->nombre_usuario_solicitante );
             }
             $datos=[
-                //'usuario_atencion_id'=> $usuario->id,
-                //'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'codigo'=>$this->generarCodigo(),
                 'fecha'=>Carbon::now(),
                 'estado'=>'CONFIRMADO',
@@ -200,6 +157,7 @@ class PedidoController extends Controller
                         'producto_id'=>$productoOriginal->id,
                         'descripcion'=>"Entrega inmediata para el pedido confirmado $pedido->codigo",
                         'cantidad'=>$cantidadEntrega,
+                        'saldo'=>$nuevoStock,
                         'detalle_pedido_id'=>$producto->id
                     ]);
                     $productoOriginal->update(['cantidad_actual'=>$nuevoStock]);
@@ -232,9 +190,8 @@ class PedidoController extends Controller
                 return ApiResponse::error('El pedido solo puede ser cancelado por el usuario '.$nombreUsuario );
             }
             $datos=[
-                //'usuario_atencion_id'=> $usuario->id,
-                //'nombre_usuario_atencion'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'codigo'=>$this->generarCodigo(),
+                'fecha'=>Carbon::now(),
                 'estado'=>'CANCELADO',
             ];
             $pedido->update($datos);
@@ -244,44 +201,14 @@ class PedidoController extends Controller
                 'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
                 'rol_usuario'=>$usuario->rol->nombre
             ]);
+
+            SendNotificationPedidoRealizadoJob::dispatch($pedido->estado,$usuario->id,$pedido->id);
+
             return ApiResponse::success(new PedidoResource($pedido));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
     }
-
-//    public function pendiente(Pedido $pedido,Request $request){
-//        try {
-//            if($pedido->estado !== 'EN CURSO'){
-//                return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
-//            }
-//            $usuario = $request->user();
-//            $nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
-//            if($pedido->usuario_atencion_id !== $usuario->id){
-//                return ApiResponse::error('El pedido solo puede ser enviado al cliente por el usuario '.$nombreUsuario );
-//            }
-//            $cantidadPedidosSinMonto = $this->detallePedidoRepository->cantidadProductosSinMonto($pedido->id);
-//            if($cantidadPedidosSinMonto>0){
-//                return ApiResponse::error('Existen '.$cantidadPedidosSinMonto.' productos sin monto' );
-//            }
-//            $datos=[
-//                'usuario_atencion_id'=> $usuario->id,
-//                'nombre_usuario_atencion'=>$nombreUsuario,
-//                'monto_total'=> $this->detallePedidoRepository->montoTotal($pedido->id),
-//                'estado'=>'PENDIENTE',
-//            ];
-//            $pedido->update($datos);
-//            HistorialEstadoPedido::create([
-//                'pedido_id'=>$pedido->id,
-//                'estado'=>'PENDIENTE',
-//                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
-//                'rol_usuario'=>$usuario->rol->nombre
-//            ]);
-//            return ApiResponse::success(new PedidoResource($pedido));
-//        } catch (\Exception $e) {
-//            return ApiResponse::exception($e);
-//        }
-//    }
 
     public function entregado(Pedido $pedido,Request $request){
         try {
@@ -355,7 +282,7 @@ class PedidoController extends Controller
     public function generarExcel(Pedido $pedido){
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
-            $montoTotal = array_reduce($productos->toArray(), function ($carry, $item){
+            $montoTotal = array_reduce($productos, function ($carry, $item){
                 return $carry + doubleval($item['monto']);
             }, 0);
             $templatePath = public_path('opa.xlsx');
@@ -452,18 +379,47 @@ class PedidoController extends Controller
 
     public function copiarPedido (Pedido $pedido){
         try {
-            $usuario = auth()->user();
-            $data = [
-                'contacto' => $pedido->contacto,
-                'lista_precio_id' => $pedido->lista_precio_id,
-                'usuario_solicitante_id' => $usuario->id,
-                'nombre_usuario_solicitante' => trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido)
-            ];
             $cantidadProductosPedido = $this->detallePedidoRepository->cantidadProductosPedido($pedido->id);
-            dump($cantidadProductosPedido);
             $idProductos = $this->detallePedidoRepository->getByPedidoIdProducto($pedido->id);
             $productosLista = $this->listaPrecioProductoRepository->getProductosVigentes($pedido->lista_precio_id,$idProductos);
-            dd($productosLista);
+            if($cantidadProductosPedido>count($productosLista)){
+                return ApiResponse::error('No se puede realizar una copia del pedido, la lista de precios no tiene algunos productos');
+            }
+            $usuario = auth()->user();
+            $data = [
+                'contacto' => json_encode($pedido->contacto),
+                'lista_precio_id' => $pedido->lista_precio_id,
+                'usuario_solicitante_id' => $usuario->id,
+                'nombre_usuario_solicitante' => trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+                'ciudad'=>$pedido->ciudad,
+                'institucion'=>$pedido->institucion,
+                'asunto'=>$pedido->asunto,
+                'comentario'=>$pedido->comentario
+            ];
+            $nuevoPedido = Pedido::create($data);
+            $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
+            $montoTotal = 0;
+            foreach ($productos as $producto) {
+                $monto = intval($producto->cantidad)* doubleval($productosLista[$producto->producto_id]);
+                DetallePedido::create([
+                    'pedido_id'=>$nuevoPedido->id,
+                    'producto_id'=>$producto->producto_id,
+                    'cantidad'=>$producto->cantidad,
+                    'tipo_producto'=>$producto->tipo_producto,
+                    'precio'=>$productosLista[$producto->producto_id],
+                    'monto'=>$monto,
+                    'created_by'=>$usuario->id
+                ]);
+                $montoTotal = $montoTotal + $monto;
+            }
+            HistorialEstadoPedido::create([
+                'pedido_id'=>$nuevoPedido->id,
+                'estado'=>'CREADO',
+                'nombre_usuario'=>$data['nombre_usuario_solicitante'],
+                'rol_usuario'=>$usuario->rol->nombre
+            ]);
+            $nuevoPedido->update(['monto_total'=>$montoTotal]);
+            return ApiResponse::success(new PedidoResource($nuevoPedido));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }

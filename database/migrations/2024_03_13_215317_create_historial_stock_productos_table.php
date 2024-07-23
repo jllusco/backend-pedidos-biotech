@@ -16,6 +16,7 @@ return new class extends BaseMigration
         $table->uuid('producto_id');
         $table->enum('tipo',['INGRESO','EGRESO']);
         $table->integer('cantidad');
+        $table->integer('saldo');
         $table->text('descripcion');
         $table->uuid('detalle_pedido_id')->nullable();
         $table->foreign('producto_id')->references('id')->on('producto');

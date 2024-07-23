@@ -38,6 +38,16 @@ Route::get('status', function () {
     ]);
 });
 
+
+Route::get('pedido-pendiente', function () {
+    \Illuminate\Support\Facades\Artisan::call('notify:pedidos-pendientes');
+    return response()->json([
+        'mensaje'=>'Servicio api biotech funcionando correctamente',
+        'fecha_actual' => \Carbon\Carbon::now(),
+        'version'=>'1.0.0'
+    ]);
+});
+
 Route::group(['prefix'=>'publico'],function(){
     /*Route::controller(PedidoController::class)->group(function (){
         Route::get('codigo','generarCodigo');
@@ -107,6 +117,7 @@ Route::group([
     Route::controller(CronogramaController::class)->group(function (){
         Route::get('cronogramas','index');
         Route::put('cronogramas/{cronograma}','update');
+        Route::get('configuracion-pedidos','getConfiguracion');
     });
 
     Route::controller(CategoriaController::class)->group(function (){

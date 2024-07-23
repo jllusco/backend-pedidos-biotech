@@ -22,6 +22,7 @@ class HistorialStockProductoCollection extends ResourceCollection
                     'productoId'=>$historialStockProducto->producto_id,
                     'tipo'=>$historialStockProducto->tipo,
                     'cantidad'=>$historialStockProducto->cantidad,
+                    'saldo'=>$historialStockProducto->saldo,
                     'descripcion'=>$historialStockProducto->descripcion,
                     'detallePedidoId'=>$historialStockProducto->detalle_pedido_id,
                     'fechaCreacion'=>$historialStockProducto->created_at,

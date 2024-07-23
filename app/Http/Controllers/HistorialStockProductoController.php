@@ -40,10 +40,11 @@ class HistorialStockProductoController
     public function store(StoreHistorialStockProductoRequest $request){
         try {
             $datos = $request->all();
-            $historial = HistorialStockProducto::create($datos);
-            $producto = Producto::find($historial->producto_id);
+            $producto = Producto::find($datos['producto_id']);
+            $datos['saldo']= $producto->cantidad_actual + $datos['cantidad'];
+            HistorialStockProducto::create($datos);
             $producto->update([
-                'cantidad_actual'=>$producto->cantidad_actual + $historial->cantidad
+                'cantidad_actual'=>$datos['saldo']
             ]);
             return ApiResponse::success(true);
         } catch (\Exception $e) {

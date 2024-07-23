@@ -38,4 +38,10 @@ class UserRepositoy
             ->where('estado','=','ACTIVO')
             ->get();
     }
+
+    public function getUsuariosAlmacen(){
+        return User::whereIn('rol_id',[config('constants.ROL_ALMACEN')])
+            ->where('estado','=','ACTIVO')
+            ->get();
+    }
 }
