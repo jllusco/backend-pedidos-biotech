@@ -13,7 +13,7 @@ use App\Models\ListaPrecioProducto;
 class ListaPrecioProductoRepository
 {
     public function getByListaPrecio($idListaPrecio){
-        $query = ListaPrecioProducto::with('producto.registroSanitario');
+        $query = ListaPrecioProducto::with(['producto.registroSanitario','producto.categoria']);
         $query->where('lista_precio_id','=',$idListaPrecio);
         $query->orderBy('created_at','DESC');
 
