@@ -161,6 +161,7 @@ Route::group([
         Route::get('lista-precios','index')->middleware("$permiso:listar");
         Route::get('lista-precios/{listaPrecio}','show')->middleware("$permiso:listar");
         Route::post('lista-precios','store')->middleware("$permiso:crear");
+        Route::post('lista-precios/{listaPrecio}/producto','addProducto')->middleware("$permiso:crear");
     });
 
     Route::controller(ListaPrecioProductoController::class)->group(function (){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Http\Resources\Biotech\ListaPrecioCollection;
 use App\Http\Resources\Biotech\ListaPrecioProductoCollection;
+use App\Http\Resources\Biotech\ListaPrecioProductoResource;
 use App\Http\Resources\Biotech\ListaPrecioResource;
 use App\Models\Lista;
 use App\Http\Requests\StoreListaPrecioRequest;
@@ -54,6 +55,22 @@ class ListaPrecioController extends Controller
                 ]);
             }
             return ApiResponse::success(new ListaPrecioResource($listaPrecio));
+        }catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function addProducto(ListaPrecio $listaPrecio, Request $request){
+        try{
+            $datos = $request->request->all();
+            $listaPrecioProducto = ListaPrecioProducto::create([
+                'lista_precio_id'=>$listaPrecio->id,
+                'producto_id'=>$datos['id'],
+                'precio_unitario'=>$datos['nuevoPrecioUnitario'],
+                'created_by'=>$request->user()->id
+            ]);
+            $listaPrecioProducto->producto;
+            return ApiResponse::success(new ListaPrecioProductoResource($listaPrecioProducto));
         }catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
