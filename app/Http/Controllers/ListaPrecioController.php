@@ -7,6 +7,7 @@ use App\Http\Resources\Biotech\ListaPrecioCollection;
 use App\Http\Resources\Biotech\ListaPrecioProductoCollection;
 use App\Http\Resources\Biotech\ListaPrecioProductoResource;
 use App\Http\Resources\Biotech\ListaPrecioResource;
+use App\Imports\ListaPrecioProductoImport;
 use App\Models\Lista;
 use App\Http\Requests\StoreListaPrecioRequest;
 use App\Http\Requests\UpdateListaPrecioRequest;
@@ -16,6 +17,9 @@ use App\Models\ListaPrecioProducto;
 use App\Repository\ListaPrecioProductoRepository;
 use App\Repository\ListaPrecioRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListaPrecioController extends Controller
 {
@@ -83,6 +87,53 @@ class ListaPrecioController extends Controller
                 'listaPrecio'=>new ListaPrecioResource($listaPrecio),
                 'productos'=>new ListaPrecioProductoCollection($productos)
             ]);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function storeImport (Request $request){
+        try {
+            $request->validate([
+                'archivo' => 'required|file|mimes:xlsx,xls',
+                'nombre' => 'required|string',
+            ]);
+            $data = Excel::toCollection(new class implements ToCollection {
+                public function collection(Collection $rows)
+                {
+                    return $rows;
+                }
+            }, $request->file('archivo'));
+            $rows = $data->first();
+            if ($rows->first()->count() !== 2) {
+                return ApiResponse::error('El archivo debe tener exactamente dos columnas.');
+            }
+            $listaPrecio = ListaPrecio::create(['nombre'=>$request->get('nombre')]);
+            Excel::import(new ListaPrecioProductoImport($listaPrecio->id), $request->file('archivo'));
+            return ApiResponse::success(true);
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function updateImport (ListaPrecio $listaPrecio, Request $request){
+        try {
+            $request->validate([
+                'archivo' => 'required|file|mimes:xlsx,xls',
+            ]);
+            $data = Excel::toCollection(new class implements ToCollection {
+                public function collection(Collection $rows)
+                {
+                    return $rows;
+                }
+            }, $request->file('archivo'));
+            $rows = $data->first();
+            if ($rows->first()->count() !== 2) {
+                return ApiResponse::error('El archivo debe tener exactamente dos columnas.');
+            }
+            $listaPrecio->update(['nombre'=>$listaPrecio->nombre]);
+            Excel::import(new ListaPrecioProductoImport($listaPrecio->id), $request->file('archivo'));
+            return ApiResponse::success(true);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
