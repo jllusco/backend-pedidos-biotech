@@ -8,13 +8,22 @@ use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Requests\UpdateCategoriaRequest;
 use App\Http\Resources\CategoriaCollection;
 use App\Http\Resources\CategoriaResource;
+use App\Repository\CategoriaRepository;
+use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
-    public function index(){
+    private $categoriaRepository;
+
+    public function __construct(CategoriaRepository $categoriaRepository)
+    {
+        $this->categoriaRepository = $categoriaRepository;
+    }
+
+    public function index(Request $request){
         try {
-            $menus = Categoria::paginate();
-            return ApiResponse::success( new CategoriaCollection($menus));
+            $categorias = $this->categoriaRepository->findAll($request->query->all());
+            return ApiResponse::success( new CategoriaCollection($categorias));
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
