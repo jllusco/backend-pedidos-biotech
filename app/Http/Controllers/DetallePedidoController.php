@@ -29,6 +29,7 @@ class DetallePedidoController extends Controller
             if($pedido->created_by !== $request->user()->id)
                 return ApiResponse::error('No se puede eliminar el producto, no es el usuario solicitante');
             $detallePedido->delete();
+            $pedido->update(['monto_total'=> $this->detallePedidoRepository->montoTotal($pedido->id)]);
             return ApiResponse::success(true);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);

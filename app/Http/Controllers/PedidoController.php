@@ -181,7 +181,7 @@ class PedidoController extends Controller
 
     public function cancelar(Pedido $pedido,Request $request){
         try {
-            if($pedido->estado !== 'PENDIENTE'){
+            if(!in_array($pedido->estado,['CREADO','PENDIENTE'])){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
             $usuario = $request->user();
@@ -387,7 +387,7 @@ class PedidoController extends Controller
             }
             $usuario = auth()->user();
             $data = [
-                'contacto' => json_encode($pedido->contacto),
+                'contacto' => json_encode(json_decode($pedido->contacto,true)),
                 'lista_precio_id' => $pedido->lista_precio_id,
                 'usuario_solicitante_id' => $usuario->id,
                 'nombre_usuario_solicitante' => trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),

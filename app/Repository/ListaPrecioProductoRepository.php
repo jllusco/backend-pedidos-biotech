@@ -15,11 +15,13 @@ class ListaPrecioProductoRepository
     public function getByListaPrecio($idListaPrecio)
     {
         $query = ListaPrecioProducto::with(['producto.registroSanitario', 'producto.categoria']);
-        $query->where('lista_precio_id', '=', $idListaPrecio)
-            ->join('producto', 'lista_precio_producto.producto_id', '=', 'producto.id')
-            ->orderBy('producto.nombre', 'ASC');
+        $query->where('lista_precio_id', '=', $idListaPrecio);
 
         $resultados = $query->get();
+
+        $resultados = $resultados->sortBy(function($item) {
+            return $item->producto->nombre;
+        });
 
         return $resultados->values()->all();
     }
