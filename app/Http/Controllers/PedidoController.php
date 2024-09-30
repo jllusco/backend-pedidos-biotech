@@ -212,14 +212,14 @@ class PedidoController extends Controller
 
     public function entregado(Pedido $pedido,Request $request){
         try {
-            if($pedido->estado !== 'EN CURSO'){
+            if($pedido->estado !== 'COMPLETADO'){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
             $monto = $this->detallePedidoRepository->montoTotal($pedido->id);
             $datos=[
                 'monto_total'=> $monto,
                 'fecha_entrega'=> Carbon::now(),
-                'estado'=>'COMPLETADO'
+                'estado'=>'ENTREGADO'
             ];
             $pedido->update($datos);
             return ApiResponse::success(new PedidoResource($pedido));

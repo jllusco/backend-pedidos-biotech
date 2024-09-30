@@ -41,7 +41,11 @@ class HistorialStockProductoController
         try {
             $datos = $request->all();
             $producto = Producto::find($datos['producto_id']);
-            $datos['saldo']= $producto->cantidad_actual + $datos['cantidad'];
+            if($datos['tipo']==='INGRESO'){
+                $datos['saldo']=$producto->cantidad_actual + $datos['cantidad'];
+            }else{
+                $datos['saldo']=$producto->cantidad_actual - $datos['cantidad'];
+            }
             HistorialStockProducto::create($datos);
             $producto->update([
                 'cantidad_actual'=>$datos['saldo']

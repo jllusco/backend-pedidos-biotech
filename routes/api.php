@@ -184,7 +184,7 @@ Route::group([
         //Route::put('pedidos/{pedido}/enviar','enviar');
         //Route::put('pedidos/{pedido}/atencion','recepcionar');
         //Route::put('pedidos/{pedido}/pendiente','pendiente');
-        //Route::put('pedidos/{pedido}/entregado','entregado');
+        Route::put('pedidos/{pedido}/entregado','entregado');
         Route::put('pedidos/{pedido}/confirmar','confirmar');
         Route::put('pedidos/{pedido}/cancelar','cancelar');
         Route::get('pedidos/{pedido}/historial','verHistorial');
