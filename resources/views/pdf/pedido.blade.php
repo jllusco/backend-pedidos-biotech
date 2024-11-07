@@ -4,6 +4,9 @@
     <title>{{ $title }}</title>
     <link rel="stylesheet" type="text/css" href="{{public_path('css/bootstrap.min.css') }}"/>
     <style>
+        body{
+            font-size: 12px !important;
+        }
         .container{
             margin-right: 2cm !important;
             margin-left: 1.5cm !important;
@@ -13,7 +16,7 @@
             font-weight: bold;
         }
         .subtitulo{
-            margin-top: 30px;
+            margin-top: 20px;
         }
         dd{
             margin-bottom: 10px;
@@ -21,6 +24,9 @@
         .pedido{
             margin-top: 20px;
             margin-bottom: 20px;
+        }
+        table {
+            font-size: 10px;
         }
     </style>
 </head>

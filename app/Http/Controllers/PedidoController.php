@@ -22,6 +22,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PedidoController extends Controller
@@ -315,9 +317,32 @@ class PedidoController extends Controller
 
             $spreadsheet = IOFactory::load($templatePath);
             $hoja = $spreadsheet->getActiveSheet();
+
+
             foreach ($data as $cell=>$value){
                 $hoja->setCellValue($cell,$value);
             }
+
+            // Definir estilo de bordes
+            $bordersStyle = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => Color::COLOR_BLACK],
+                    ],
+                ],
+            ];
+    
+            // Aplicar estilo de bordes a las celdas de productos
+            $startRow = 14;
+            $endRow = $fila; // Hasta la fila donde está el total
+            $hoja->getStyle("A{$startRow}:H{$endRow}")->applyFromArray($bordersStyle);
+
+            $hoja->getStyle("B{$startRow}:B{$endRow}")
+            ->getAlignment()
+            ->setWrapText(true);
+    
+
             $temporaryFilePath = storage_path('app/temp_report.xlsx');
             $writer = new Xlsx($spreadsheet);
             $writer->save($temporaryFilePath);
