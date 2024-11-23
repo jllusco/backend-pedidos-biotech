@@ -38,7 +38,8 @@ class DetallePedidoRepository
         $query = DetallePedido::query();
         $query->selectRaw('producto_id, producto.precio_exwork, producto.tipo, SUM(cantidad) as cantidad')
             ->join('producto', 'producto.id', '=', 'producto_id')
-            ->groupBy('producto_id');
+            ->whereIn('pedido_id', $idPedidos)
+            ->groupBy('producto_id', 'producto.precio_exwork', 'producto.tipo');
         return $query->get();
     }
 
