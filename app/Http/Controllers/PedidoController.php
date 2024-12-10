@@ -254,12 +254,17 @@ class PedidoController extends Controller
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
             $pedido->contacto = json_decode($pedido->contacto);
+            $montoTotal = array_reduce($productos, function ($carry, $item){
+                return $carry + doubleval($item['monto']);
+            }, 0);
             $data = [
                 'title'=>'PEDIDO',
                 'pedido'=>new PedidoResource($pedido),
                 'logo'=>$this->getLogoBase64(),
                 'productos'=>$productos,
-                'esOperador'=>$request->user()->rol->codigo !== 'ROL-003'
+                //'montoTotal'=> $montoTotal,
+                'montoTotal'=>'Bs. ' . number_format($montoTotal, 2, '.', ',')
+                //'esOperador'=>$request->user()->rol->codigo !== 'ROL-003'
             ];
             $pdf = Pdf::loadView('pdf.pedido',$data);
             $pdf->setPaper('letter');

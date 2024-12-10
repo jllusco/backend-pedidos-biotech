@@ -97,10 +97,12 @@
                         <th class="text-center">Descripcion</th>
                         <th class="text-center">Unidad</th>
                         <th class="text-center">Cantidad</th>
-                        @if($esOperador)
-                            <th class="text-center">Precio</th>
-                            <th class="text-center">Sub total</th>
-                        @endif
+                        {{--@if($esOperador)--}}
+                            {{--<th class="text-center">Precio</th>--}}
+                            {{--<th class="text-center">Sub total</th>--}}
+                        {{--@endif--}}
+                        <th class="text-center">Precio</th>
+                        <th class="text-center">Sub total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,13 +112,21 @@
                             <td>{{$producto->producto->nombre}} - {{$producto->producto->presentacion->nombre}}</td>
                             <td class="text-center">{{$producto->producto->unidad}}</td>
                             <td class="text-center">{{$producto->cantidad}}</td>
-                            @if($esOperador)
-                                <td class="text-right">{{$producto->precio}}</td>
-                                <td class="text-right">{{$producto->monto}}</td>
-                            @endif
+                            {{--@if($esOperador)--}}
+                                {{--<td class="text-right">{{$producto->precio}}</td>--}}
+                                {{--<td class="text-right">{{$producto->monto}}</td>--}}
+                            {{--@endif--}}
+                            <td class="text-right">{{number_format($producto->precio, 2, '.', ',')}}</td>
+                            <td class="text-right">{{number_format($producto->monto, 2, '.', ',')}}</td>
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr style="font-weight: bold; font-size: 14px;">
+                        <td colspan="4">TOTAL</td>
+                        <td colspan="2" style="text-align: right;">{{ $montoTotal }}</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
