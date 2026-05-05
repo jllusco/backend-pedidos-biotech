@@ -17,7 +17,9 @@ use App\Repository\PedidoProveedorRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PedidoProveedorController extends Controller
@@ -28,7 +30,7 @@ class PedidoProveedorController extends Controller
 
     public function __construct(
         DetallePedidoRepository $detallePedidoRepository,
-        PedidoProveedorRepository $pedidoProveedorRepository, 
+        PedidoProveedorRepository $pedidoProveedorRepository,
         DetallePedidoProveedorRepository $detallePedidoProveedorRepository)
     {
         $this->detallePedidoRepository = $detallePedidoRepository;
@@ -181,6 +183,94 @@ class PedidoProveedorController extends Controller
             $writer->save($temporaryFilePath);
             return response()->download($temporaryFilePath)->deleteFileAfterSend(true);
 
+        }catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function consolidadoMesExcel (Request $request){
+        try{
+            $anio = $request->anio ?? now()->year;
+            $mes = $request->mes ?? now()->month;
+
+            $fechaInicio = Carbon::create($anio, $mes, 1)->startOfMonth();
+            $fechaFin = Carbon::create($anio, $mes, 1)->endOfMonth();
+
+            $spreadsheet = new Spreadsheet();
+            $sheet1 = $spreadsheet->getActiveSheet();
+            $sheet1->setTitle('PEDIDOS');
+
+           $opa = DB::table('detalle_pedido as dp')
+                ->join('pedido as p', 'p.id', '=', 'dp.pedido_id')
+                ->join('producto as pr', 'pr.id', '=', 'dp.producto_id')
+                ->whereNull('dp.deleted_at')
+                ->whereExists(function ($q) use ($fechaInicio, $fechaFin) {
+                    $q->select(DB::raw(1))
+                    ->from('pedido_proveedor_pedido as ppp')
+                    ->join('pedido_proveedor as pp', 'pp.id', '=', 'ppp.pedido_proveedor_id')
+                    ->whereColumn('ppp.pedido_id', 'p.id')
+                    ->whereBetween('pp.fecha', [$fechaInicio, $fechaFin]);
+                })
+                ->select(
+                    'pr.codigo',
+                    'pr.nombre as descripcion',
+                    DB::raw('SUM(dp.cantidad) as cantidad'),
+                    'p.nombre_usuario_solicitante as cliente'
+                )
+                ->groupBy(
+                    'pr.codigo',
+                    'pr.nombre',
+                    'p.nombre_usuario_solicitante'
+                )
+                ->get();
+
+            $sheet1->fromArray([
+                ['Código', 'Descripción', 'Cantidad', 'Cliente']
+            ], NULL, 'A1');
+
+            $fila = 2;
+            foreach ($opa as $row) {
+                $sheet1->setCellValue("A$fila", $row->codigo);
+                $sheet1->setCellValue("B$fila", $row->descripcion);
+                $sheet1->setCellValue("C$fila", $row->cantidad);
+                $sheet1->setCellValue("D$fila", $row->cliente);
+                $fila++;
+            }
+            $sheet1->setAutoFilter("A1:D" . ($fila - 1));
+
+            $pial = DB::table('pedido_proveedor as pp')
+            ->join('detalle_pedido_proveedor as dpp', 'dpp.pedido_proveedor_id', '=', 'pp.id')
+            ->join('producto as pr', 'pr.id', '=', 'dpp.producto_id')
+            ->whereBetween('pp.fecha', [$fechaInicio, $fechaFin])
+            ->select(
+                'pr.codigo',
+                'pr.descripcion',
+                DB::raw('SUM(dpp.cantidad) as cantidad')
+            )
+            ->groupBy('pr.codigo', 'pr.descripcion')
+            ->get();
+
+            $sheet2 = $spreadsheet->createSheet();
+            $sheet2->setTitle('PIAL');
+
+            $sheet2->fromArray([
+                ['Código', 'Descripción', 'Cantidad']
+            ], NULL, 'A1');
+
+            $fila = 2;
+            foreach ($pial as $row) {
+                $sheet2->setCellValue("A$fila", $row->codigo);
+                $sheet2->setCellValue("B$fila", $row->descripcion);
+                $sheet2->setCellValue("C$fila", $row->cantidad);
+                $fila++;
+            }
+            $sheet2->setAutoFilter("A1:C" . ($fila - 1));
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'reporte_consolidado_mes.xlsx';
+            $temporaryFilePath = storage_path("app/$fileName");
+            $writer->save($temporaryFilePath);
+            return response()->download($temporaryFilePath)->deleteFileAfterSend(true);
         }catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
