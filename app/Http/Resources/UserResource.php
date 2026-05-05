@@ -38,6 +38,16 @@ class UserResource extends JsonResource
             'institucion'=>$this->institucion,
             'sistema'=>$this->sistema,
             'rolId'=>$this->rol_id,
+            'nombreCompleto'=>trim(implode(' ', array_filter([
+                $this->nombres,
+                $this->primer_apellido,
+                $this->segundo_apellido
+            ]))),
+            'nombreCompletoInstitucion'=>trim(implode(' ', array_filter([
+                $this->nombres,
+                $this->primer_apellido,
+                $this->segundo_apellido
+            ]))).' - '.$this->institucion,
             'rol'=> new RolResource($this->whenLoaded('rol')),
             'listaPrecioId'=>$this->lista_precio_id,
             'listaPrecio'=> new ListaPrecioResource($this->whenLoaded('listaPrecio')),

@@ -53,7 +53,7 @@
     </div>
     <div class="row pedido">
         <div class="col-xs-4">
-            <dt>Fecha:</dt><dd>{{$pedido->createdAt}}</dd>
+            <dt>Fecha:</dt><dd>{{$pedido->fecha}}</dd>
         </div>
         <div class="col-xs-4">
             <dt>Ciudad:</dt><dd>{{$pedido->ciudad}}</dd>

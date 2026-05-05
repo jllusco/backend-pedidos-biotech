@@ -30,6 +30,19 @@ class UserRepositoy
         if(isset($request['institucion'])){
             $query->where('institucion','like','%'.$request['institucion'].'%');
         }
+        if(isset($request['order'])){
+            $allowed = ['nombres', 'created_at', 'estado', 'institucion'];
+            $order = $request['order'];
+            $direction = str_starts_with($order, '-') ? 'DESC' : 'ASC';
+            $column = ltrim($order, '-');
+
+            if (in_array($column, $allowed)) {
+                $query->orderBy($column, $direction);
+            }
+        }else{
+            $query->orderBy('created_at','DESC');
+        }
+
         return $query->paginate($request['limit']??10);
     }
 

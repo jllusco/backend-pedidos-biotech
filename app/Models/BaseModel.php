@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: juan.llusco
- * Date: 4/3/2024
- * Time: 11:03
- */
 
 namespace App\Models;
-
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
