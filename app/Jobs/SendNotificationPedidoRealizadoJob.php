@@ -61,7 +61,7 @@ class SendNotificationPedidoRealizadoJob implements ShouldQueue
 
             $usuarioCreador->notify(new PedidoRealizadoNotification($mensajesCreador[$this->tipo]));
         }catch(\Exception $e){
-            Log::info('Error: ', $e);
+            Log::info('Error: '.$e);
         }
     }
 }
