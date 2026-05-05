@@ -24,6 +24,17 @@ class PedidoRepository
         if(isset($request['created_by'])){
             $query->where('created_by','=',$request['created_by']);
         }
+        if(isset($request['institucion'])){
+            $query->where('institucion','=',$request['institucion']);
+        }
+        if (isset($request['fechaInicio'])) {
+            $query->whereRaw('DATE(COALESCE(fecha, created_at)) >= ?', [$request['fechaInicio']]);
+            //$query->whereDate('fecha', '>=', $request['fechaInicio']);
+        }
+        if (isset($request['fechaFin'])) {
+            $query->whereRaw('DATE(COALESCE(fecha, created_at)) <= ?', [$request['fechaFin']]);
+            //$query->whereDate('fecha', '<=', $request['fechaFin']);
+        }
 
         $query->addSelect([
             'total_productos'=>function($subQuery){
@@ -53,5 +64,32 @@ class PedidoRepository
             ->groupBy('estado')
             ->get();
         return $query;
+    }
+
+    public function groupByInstituciones($params = [])
+    {
+        $query = Pedido::query()
+            ->select('institucion')
+            ->whereNotNull('institucion')
+            ->where('institucion', '!=', '');
+
+        if (!empty($params['created_by'])) {
+            $query->where('created_by', $params['created_by']);
+        }
+
+        if (!empty($params['search'])) {
+            $query->where('institucion','like','%'.$params['search'].'%');
+        }
+
+        return $query
+            ->groupBy('institucion')
+            ->orderBy('institucion', 'ASC')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'label' => $item->institucion,
+                    'value' => $item->institucion,
+                ];
+            });
     }
 }
