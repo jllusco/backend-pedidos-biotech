@@ -59,4 +59,17 @@ class Producto extends BaseModel
     {
         return json_decode($value);
     }
+
+    public function getRegistroSanitarioTextoAttribute()
+{
+    if ($this->tipo === 'CONSUMIBLE') {
+        return $this->registro_sanitario_id
+            ? optional($this->registroSanitario)->numero
+            : 'NO CORRESPONDE';
+    }
+
+    return $this->registro_sanitario_id
+        ? optional($this->registroSanitario)->numero
+        : 'NO TIENE';
+}
 }
