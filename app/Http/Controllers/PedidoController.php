@@ -72,6 +72,7 @@ class PedidoController extends Controller
             $datos['contacto'] = json_encode($datos['contacto']);
             $datos['lista_precio_id'] = $usuario->lista_precio_id;
             $datos['usuario_solicitante_id'] = $usuario->id;
+            $datos['fecha']= Carbon::now();
             $datos['nombre_usuario_solicitante'] = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
             $pedido = Pedido::create($datos);
             foreach ($productos as $producto) {
@@ -183,24 +184,23 @@ class PedidoController extends Controller
 
     public function cancelar(Pedido $pedido,Request $request){
         try {
-            if(!in_array($pedido->estado,['CREADO','PENDIENTE'])){
+            if(!in_array($pedido->estado,['CREADO','PENDIENTE','CONFIRMADO'])){
                 return ApiResponse::error('El pedido se encuentra en estado '.$pedido->estado);
             }
             $usuario = $request->user();
-            $nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
-            if($pedido->usuario_solicitante_id !== $usuario->id){
-                return ApiResponse::error('El pedido solo puede ser cancelado por el usuario '.$nombreUsuario );
+            $esUsuarioAlmacen = $usuario->rol_id === config('constants.ROL_ALMACEN');
+            if(!$esUsuarioAlmacen && $pedido->usuario_solicitante_id !== $usuario->id){
+                return ApiResponse::error('El pedido solo puede ser cancelado por el usuario '.$pedido->nombre_usuario_solicitante );
             }
+            $nombreUsuario = trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido);
             $datos=[
-                'codigo'=>$this->generarCodigo(),
-                'fecha'=>Carbon::now(),
                 'estado'=>'CANCELADO',
             ];
             $pedido->update($datos);
             HistorialEstadoPedido::create([
                 'pedido_id'=>$pedido->id,
                 'estado'=>'CANCELADO',
-                'nombre_usuario'=>trim($usuario->nombres.' '.$usuario->primer_apellido.' '.$usuario->segundo_apellido),
+                'nombre_usuario'=>$nombreUsuario,
                 'rol_usuario'=>$usuario->rol->nombre
             ]);
 
@@ -254,9 +254,12 @@ class PedidoController extends Controller
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
             $pedido->contacto = json_decode($pedido->contacto);
-            $montoTotal = array_reduce($productos, function ($carry, $item){
-                return $carry + doubleval($item['monto']);
-            }, 0);
+            // $montoTotal = array_reduce($productos, function ($carry, $item){
+            //     return $carry + doubleval($item['monto']);
+            // }, 0);
+            $montoTotal = $productos->sum(function ($item) {
+                return (float) $item->monto;
+            });
             $data = [
                 'title'=>'PEDIDO',
                 'pedido'=>new PedidoResource($pedido),
@@ -289,9 +292,12 @@ class PedidoController extends Controller
     public function generarExcel(Pedido $pedido){
         try {
             $productos = $this->detallePedidoRepository->getByPedido($pedido->id);
-            $montoTotal = array_reduce($productos, function ($carry, $item){
-                return $carry + doubleval($item['monto']);
-            }, 0);
+            // $montoTotal = array_reduce($productos, function ($carry, $item){
+            //     return $carry + doubleval($item['monto']);
+            // }, 0);
+            $montoTotal = $productos->sum(function ($item) {
+                return (float) $item->monto;
+            });
             $templatePath = public_path('opa.xlsx');
             $pedido->contacto = json_decode($pedido->contacto);
             $data = [
@@ -313,7 +319,7 @@ class PedidoController extends Controller
                 $data['D'.$fila]=$producto->producto->unidad;
                 $data['E'.$fila]=$producto->precio;
                 $data['F'.$fila]=$producto->monto;
-                $data['G'.$fila]=$producto->producto->registro_sanitario_id?$producto->producto->registroSanitario->numero:'NO TIENE';
+                $data['G'.$fila]=$producto->producto->registro_sanitario_texto;
                 $data['H'.$fila]=$producto->producto->temperatura?'DE '.$producto->producto->temperatura->min.' A '.$producto->producto->temperatura->max:'N/A';
                 $fila++;
             }
@@ -337,7 +343,7 @@ class PedidoController extends Controller
                     ],
                 ],
             ];
-    
+
             // Aplicar estilo de bordes a las celdas de productos
             $startRow = 14;
             $endRow = $fila; // Hasta la fila donde está el total
@@ -346,7 +352,7 @@ class PedidoController extends Controller
             $hoja->getStyle("B{$startRow}:B{$endRow}")
             ->getAlignment()
             ->setWrapText(true);
-    
+
 
             $temporaryFilePath = storage_path('app/temp_report.xlsx');
             $writer = new Xlsx($spreadsheet);
@@ -459,6 +465,16 @@ class PedidoController extends Controller
         try {
             $productos = $this->detallePedidoRepository->getSumProductosVendidos();
             return ApiResponse::success(new DetallePedidoCollection($productos));
+        } catch (\Exception $e) {
+            return ApiResponse::exception($e);
+        }
+    }
+
+    public function instituciones (Request $request) {
+        try {
+            $params = $request->query->all();
+            $instituciones = $this->pedidoRepository->groupByInstituciones($params);
+            return ApiResponse::success($instituciones);
         } catch (\Exception $e) {
             return ApiResponse::exception($e);
         }
