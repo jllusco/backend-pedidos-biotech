@@ -15,16 +15,31 @@ use Illuminate\Support\Facades\DB;
 class DetallePedidoRepository
 {
     public function getByPedido($idPedido){
-        $query = DetallePedido::with('producto.registroSanitario');
-        $query->where('pedido_id','=',$idPedido);
-        $query->orderBy('created_at','DESC');
-        $resultados = $query->get();
+        // $query = DetallePedido::with('producto.registroSanitario');
+        // $query->where('pedido_id','=',$idPedido);
+        // $query->orderBy('created_at','DESC');
+        // $resultados = $query->get();
 
-        $resultados = $resultados->sortBy(function($item) {
-            return $item->producto->nombre;
-        });
+        // $resultados = $resultados->sortBy(function($item) {
+        //     return $item->producto->nombre;
+        // });
 
-        return $resultados->values()->all();
+        // return $resultados->values()->all();
+
+        return DetallePedido::with('producto.registroSanitario')
+        ->join('producto', 'producto.id', '=', 'detalle_pedido.producto_id')
+        ->where('detalle_pedido.pedido_id', $idPedido)
+        ->orderByRaw("
+            CASE
+                WHEN producto.tipo = 'REACTIVO' AND LOWER(producto.nombre) REGEXP '100[[:space:]]*(det|det\\.|determinaciones)' THEN 1
+                WHEN producto.tipo = 'REACTIVO' AND LOWER(producto.nombre) REGEXP '50[[:space:]]*(det|det\\.|determinaciones)' THEN 2
+                WHEN producto.tipo = 'CONSUMIBLE' THEN 3
+                ELSE 4
+            END
+        ")
+        ->orderBy('producto.nombre', 'ASC')
+        ->select('detalle_pedido.*') // 🔥 importante
+        ->get();
     }
 
     public function getByPedidoIdProducto($idPedido){
