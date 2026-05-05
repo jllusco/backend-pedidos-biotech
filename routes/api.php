@@ -18,6 +18,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RegistroSanitarioController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ComunicadoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,7 +108,15 @@ Route::group([
         Route::post('permisos','store');
     });
 
-   
+    Route::controller(ComunicadoController::class)->group(function(){
+        Route::get('comunicados','index');
+        Route::get('comunicados/usuario','usuario');
+        Route::post('comunicados','store');
+        Route::get('comunicados/{comunicado}','show');
+        Route::put('comunicados/{comunicado}','update');
+        Route::patch('comunicados/{comunicado}/estado','updateEstado');
+    });
+
 });
 
 Route::group([
@@ -178,6 +187,7 @@ Route::group([
     Route::controller(PedidoController::class)->group(function (){
         Route::get('pedidos','index');
         Route::post('pedidos','store');
+        Route::get('pedidos/instituciones','instituciones');
         // Route::post('pedidos/prueba','prueba');
         Route::post('pedidos/{pedido}/copia','copiarPedido');
         Route::get('pedidos/{pedido}','show');
@@ -193,6 +203,7 @@ Route::group([
     });
 
     Route::controller(DetallePedidoController::class)->group(function(){
+        Route::post('detalle-pedido','store');
         Route::delete('detalle-pedido/{detallePedido}','destroy');
         Route::patch('detalle-pedido/{detallePedido}/cantidad','updateCantidad');
         Route::patch('detalle-pedido/{detallePedido}/precio','updatePrecio');
@@ -201,6 +212,7 @@ Route::group([
     Route::controller(PedidoProveedorController::class)->group(function(){
         Route::get('pial','index');
         Route::post('pial','store');
+        Route::get('pial/consolidado/excel','consolidadoMesExcel');
         Route::get('pial/{pedidoProveedor}','show');
         Route::get('pial/{pedidoProveedor}/pdf','generarPdf');
         Route::get('pial/{pedidoProveedor}/excel','generarExcel');
@@ -217,12 +229,3 @@ Route::group([
         Route::get('pedidos/productos-vendidos','productosMasVendidos');
     });
 });
-
-
-
-
-
-
-
-
-
