@@ -65,7 +65,8 @@
         },
         "platform": {
             "ext-gd": "1.0"
-        }
+        },
+        "platform-check": false
     },
     "minimum-stability": "stable",
     "prefer-stable": true
