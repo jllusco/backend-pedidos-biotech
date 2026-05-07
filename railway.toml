@@ -2,5 +2,4 @@
 builder = "railpack"
 
 [build.environment]
-PHP_VERSION = "8.2"
-NODE_VERSION = "20"
+PHP_VERSION = "8.3"
